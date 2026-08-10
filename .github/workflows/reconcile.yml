@@ -24,6 +24,11 @@ on:
         required: false
         type: boolean
         default: false
+      retry_failed:
+        description: "Also build systems quarantined after build.max_failures failures"
+        required: false
+        type: boolean
+        default: false
 
 # Two overlapping runs would build the same missing archives twice, since the
 # second plans before the first publishes anything.
@@ -42,6 +47,7 @@ jobs:
       has_work: ${{ steps.plan.outputs.has_work }}
       count: ${{ steps.plan.outputs.count }}
       todo: ${{ steps.plan.outputs.todo }}
+      quarantined: ${{ steps.plan.outputs.quarantined }}
       runner: ${{ steps.plan.outputs.runner }}
       ubuntu: ${{ steps.plan.outputs.ubuntu }}
       timeout: ${{ steps.plan.outputs.timeout }}
@@ -57,7 +63,8 @@ jobs:
           python3 scripts/plan_work.py \
             --repo "${{ github.repository }}" \
             ${{ inputs.limit && format('--limit {0}', inputs.limit) || '' }} \
-            ${{ inputs.language && format('--language {0}', inputs.language) || '' }}
+            ${{ inputs.language && format('--language {0}', inputs.language) || '' }} \
+            ${{ inputs.retry_failed && '--include-quarantined' || '' }}
 
   build:
     needs: plan
@@ -72,7 +79,12 @@ jobs:
       # concurrency for hours.
       max-parallel: 10
       matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
-    name: ${{ matrix.language }} · ${{ matrix.name }} · ${{ matrix.version }}
+    # This name is the identity render_index.py keys both the reported status
+    # and the failure strike counter on (see job_name there). It has to carry
+    # the whole (system, version, srcml version) triple: without the srcml
+    # version, two matrix rows would share one name and one night's failure
+    # would strike both of them.
+    name: ${{ matrix.language }} · ${{ matrix.name }} · ${{ matrix.version }} · srcml ${{ matrix.srcml_version }}
     steps:
       - uses: actions/checkout@v4
 
@@ -109,6 +121,7 @@ jobs:
             echo
             echo "- attempted: **${{ needs.plan.outputs.count }}**"
             echo "- outstanding before this run: **${{ needs.plan.outputs.todo }}**"
+            echo "- quarantined (not retried): **${{ needs.plan.outputs.quarantined }}**"
             echo "- build outcome: **${{ needs.build.result }}**"
           } >> "$GITHUB_STEP_SUMMARY"
           if [ "${{ needs.build.result }}" = "failure" ]; then

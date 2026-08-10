@@ -29,11 +29,13 @@ jobs:
       - name: Validate config and workflow YAML
         run: |
           python3 - <<'PY'
-          import glob, sys, tomllib, yaml
+          import glob, json, sys, tomllib, yaml
           for f in sorted(glob.glob(".github/**/*.yml", recursive=True)):
               yaml.safe_load(open(f)); print("yaml ok  ", f)
           for f in sorted(glob.glob("config/*.toml")):
               tomllib.load(open(f, "rb")); print("toml ok  ", f)
+          for f in ("config/failures.json", "index.json"):
+              json.load(open(f)); print("json ok  ", f)
           PY
 
       # A lockfile that discovery would rewrite differently means someone
@@ -57,6 +59,27 @@ jobs:
           if bad:
               sys.exit(f"not canonically formatted (re-run discover.py): {path_list}")
           print("lockfiles canonical")
+          PY
+
+      # The same check for the strike ledger, and it matters more here: a bad
+      # hand-edit does not just look untidy, it silently changes what the
+      # reconciler builds. load_failures swallows a malformed file as empty, so
+      # without this the mistake would be invisible.
+      - name: Check the failure ledger is canonically formatted
+        run: |
+          python3 - <<'PY'
+          import sys
+          sys.path.insert(0, "scripts")
+          from pathlib import Path
+          from archive_common import load_failures, write_failures
+          path = Path("config/failures.json")
+          original = path.read_text()
+          if write_failures(load_failures(path), path) != original:
+              sys.exit(
+                  "config/failures.json is not canonically formatted, or was "
+                  "hand-edited into a shape load_failures cannot read"
+              )
+          print("failure ledger canonical")
           PY
 
       - name: Smoke-test the archive pipeline with a stub srcml

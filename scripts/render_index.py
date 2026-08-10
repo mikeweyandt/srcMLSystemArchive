@@ -21,48 +21,125 @@ from archive_common import (
     LANGUAGES,
     REPO_ROOT,
     GitHub,
+    failures_path,
+    load_failures,
     load_policy,
     lockfile_path,
     read_lockfile,
     release_tag,
+    write_failures,
 )
 
 MAX_RELEASE_PAGES = 100
 
-# The reconcile workflow names each build job "<language> · <system> · <version>",
-# which is exactly the identity of a row here. That makes the Actions history a
-# usable status source with no extra bookkeeping: a system whose last build
-# attempt failed is reported as failed rather than being indistinguishable from
-# one that has simply not been built yet.
-RECONCILE_WORKFLOW = "Reconcile archives"
+# The reconcile workflow names each build job
+# "<language> · <system> · <version> · srcml <srcml version>", which is exactly
+# the identity of a row here. That makes the Actions history a usable status
+# source with no extra bookkeeping: a system whose last build attempt failed is
+# reported as failed rather than being indistinguishable from one that has
+# simply not been built yet. It is also what the strike counter keys on, so the
+# name has to carry the full triple — see legacy_job_name below.
+RECONCILE_WORKFLOW_FILE = "reconcile.yml"
 JOB_SEP = " · "
 MAX_RUNS_SCANNED = 20
 
+# Pages of jobs to walk per run. build.max_jobs_per_run is clamped to 256 by
+# plan_work, plus the plan and report jobs, so three pages always covers a run.
+MAX_JOB_PAGES = 3
 
-def job_name(language: str, system: str, version: str) -> str:
+# What counts as a strike. A cancelled job says nothing about the system — it
+# says a human or a newer run intervened.
+STRIKE_CONCLUSIONS = frozenset({"failure", "timed_out"})
+
+# Only the nightly schedule is the retry loop that quarantine governs.
+# workflow_dispatch inputs are not readable back from the REST API, so a
+# dry run cannot be told apart from a real one at this layer. Counting manual
+# runs would make a dry run able to *add* strikes while never being able to
+# clear one (it publishes no release), so someone testing a fix could
+# quarantine the very system they were fixing. Excluding them can only
+# under-count, which is the safe direction, and it is what makes the
+# retry_failed escape hatch free.
+STRIKE_EVENTS = frozenset({"schedule"})
+
+FAILING_STATUSES = ("failed", "quarantined")
+
+
+def job_name(language: str, system: str, version: str, srcml_version: str) -> str:
+    return f"{language}{JOB_SEP}{system}{JOB_SEP}{version}{JOB_SEP}srcml {srcml_version}"
+
+
+def legacy_job_name(language: str, system: str, version: str) -> str:
+    """The pre-quarantine three-part job name.
+
+    Used only to keep INDEX.md's build-log links working for runs that predate
+    the rename. Deliberately NOT used for strike counting: under more than one
+    srcml version this name is ambiguous between two tags, and awarding both of
+    them the same strike is exactly the bug the rename fixes.
+
+    Remove once every run older than the rename has aged out of the scan window.
+    """
     return f"{language}{JOB_SEP}{system}{JOB_SEP}{version}"
 
 
-def collect_job_outcomes(gh: GitHub, repo: str) -> dict[str, dict]:
-    """Map build-job name -> outcome of its most recent attempt."""
-    outcomes: dict[str, dict] = {}
-    runs = gh.get(f"/repos/{repo}/actions/runs", {"per_page": 100}) or {}
-    reconciles = [
-        r for r in runs.get("workflow_runs", []) if r.get("name") == RECONCILE_WORKFLOW
-    ][:MAX_RUNS_SCANNED]
-    # Newest first, and the first sighting of a job name wins.
+def collect_job_attempts(gh: GitHub, repo: str) -> tuple[dict[str, list[dict]], int]:
+    """Map build-job name -> every attempt in the scan window, newest first.
+
+    Also returns the id of the oldest run scanned, which is what lets
+    apply_strikes prove a zeroed record is safe to prune.
+
+    Keeping the full list rather than only the newest sighting is what makes
+    strike counting idempotent: each ledger record remembers the newest run it
+    has already counted, so re-scanning the same window — which happens on
+    every single render — adds nothing.
+
+    Scanned via the workflow-scoped endpoint rather than /actions/runs: the
+    latter returns runs from *all* workflows, so slicing the first
+    MAX_RUNS_SCANNED reconciles out of one page of 100 silently yields a much
+    shorter window on a busy week, exactly when builds are being pushed.
+    """
+    attempts: dict[str, list[dict]] = {}
+    runs = (
+        gh.get(
+            f"/repos/{repo}/actions/workflows/{RECONCILE_WORKFLOW_FILE}/runs",
+            {"per_page": MAX_RUNS_SCANNED, "exclude_pull_requests": "true"},
+        )
+        or {}
+    )
+    reconciles = runs.get("workflow_runs", [])
+    if not reconciles:
+        print(
+            f"  warning: no runs found for {RECONCILE_WORKFLOW_FILE}; "
+            f"statuses will show as pending and no strikes will be counted",
+            file=sys.stderr,
+        )
+        return {}, 0
+
+    oldest_run_id = min(int(r["id"]) for r in reconciles)
     for run in reconciles:
-        jobs = gh.get(f"/repos/{repo}/actions/runs/{run['id']}/jobs", {"per_page": 100})
-        for job in (jobs or {}).get("jobs", []):
+        jobs = gh.paginate(
+            f"/repos/{repo}/actions/runs/{run['id']}/jobs",
+            max_pages=MAX_JOB_PAGES,
+            key="jobs",
+        )
+        for job in jobs:
             name = job.get("name", "")
-            if JOB_SEP not in name or name in outcomes:
+            if JOB_SEP not in name:
                 continue
-            outcomes[name] = {
-                "conclusion": job.get("conclusion"),
-                "run_url": run.get("html_url", ""),
-                "attempted_at": run.get("created_at", ""),
-            }
-    return outcomes
+            attempts.setdefault(name, []).append(
+                {
+                    "conclusion": job.get("conclusion"),
+                    "event": run.get("event", ""),
+                    "run_id": int(run["id"]),
+                    "run_url": run.get("html_url", ""),
+                    "attempted_at": run.get("created_at", ""),
+                }
+            )
+    return attempts, oldest_run_id
+
+
+def latest_outcomes(attempts: dict[str, list[dict]]) -> dict[str, dict]:
+    """Newest attempt per job name — what the index displays."""
+    return {name: rows[0] for name, rows in attempts.items() if rows}
 
 
 def human_bytes(n: int) -> str:
@@ -94,10 +171,14 @@ def collect_releases(gh: GitHub, repo: str) -> dict[str, dict]:
     return found
 
 
-def build_rows(
-    policy: dict, releases: dict[str, dict], outcomes: dict[str, dict]
-) -> list[dict]:
-    rows = []
+def iter_targets(policy: dict) -> list[dict]:
+    """Every (system, srcml version) the lockfiles call for, with its identity.
+
+    Lifted out of build_rows so that strike accounting and rendering agree on
+    what a row *is* by construction rather than by two parallel loops that have
+    to be kept in step.
+    """
+    targets: list[dict] = []
     for language in policy["targets"]["languages"]:
         path = lockfile_path(language)
         if not path.exists():
@@ -105,55 +186,205 @@ def build_rows(
         lock = read_lockfile(language, path)
         for rank, sysrec in enumerate(lock.systems, start=1):
             for srcml_version in policy["srcml"]["versions"]:
-                tag = release_tag(language, sysrec.name, sysrec.version, srcml_version)
-                rel = releases.get(tag)
-                outcome = outcomes.get(job_name(language, sysrec.name, sysrec.version), {})
-
-                # A published release is the ground truth; the Actions history
-                # only explains what happened to the ones that are not there.
-                if rel:
-                    status = "published"
-                elif outcome.get("conclusion") == "failure":
-                    status = "failed"
-                elif outcome.get("conclusion") in ("cancelled", "timed_out"):
-                    status = outcome["conclusion"]
-                else:
-                    status = "pending"
-
-                rows.append(
+                targets.append(
                     {
                         "language": language,
-                        "language_display": LANGUAGES[language][2],
                         "rank": rank,
+                        "sysrec": sysrec,
                         "system": sysrec.name,
                         "version": sysrec.version,
-                        "version_kind": sysrec.version_kind,
-                        "commit": sysrec.commit,
-                        "license": sysrec.license,
                         "srcml_version": srcml_version,
-                        "tag": tag,
-                        "status": status,
-                        "published": bool(rel),
-                        "last_run_url": outcome.get("run_url", ""),
-                        "last_attempt_at": outcome.get("attempted_at", ""),
-                        **(rel or {}),
+                        "tag": release_tag(
+                            language, sysrec.name, sysrec.version, srcml_version
+                        ),
+                        "job": job_name(
+                            language, sysrec.name, sysrec.version, srcml_version
+                        ),
+                        "legacy_job": legacy_job_name(
+                            language, sysrec.name, sysrec.version
+                        ),
                     }
                 )
+    return targets
+
+
+def stale_languages(policy: dict) -> set[str]:
+    """Languages whose lockfile is missing, so iter_targets skipped them."""
+    return {
+        language
+        for language in policy["targets"]["languages"]
+        if not lockfile_path(language).exists()
+    }
+
+
+def apply_strikes(
+    failures: dict[str, dict],
+    attempts: dict[str, list[dict]],
+    targets: list[dict],
+    published: set[str],
+    oldest_run_id: int,
+    stale: set[str],
+) -> dict[str, dict]:
+    """Fold this scan's attempts into the ledger. Pure — no I/O.
+
+    Each record carries `last_run_id`, the newest run already counted, so
+    re-running this over the same window is a no-op. That is what makes the
+    index workflow's `cancel-in-progress: true` safe: a cancelled render is
+    only ever superseded by a newer one scanning a superset of its window, so
+    cancellation defers a strike rather than dropping it.
+    """
+    updated = {tag: dict(rec) for tag, rec in failures.items()}
+    live: set[str] = set()
+
+    for target in targets:
+        tag = target["tag"]
+        live.add(tag)
+        rec = updated.get(tag)
+
+        if tag in published:
+            # Success zeroes the count but KEEPS the watermark. Deleting the
+            # record would drop the watermark, and the next scan would re-count
+            # the old failures that are still inside the window — one failure
+            # after a success would come back as three and quarantine
+            # immediately.
+            if rec:
+                rec["count"] = 0
+            continue
+
+        watermark = rec.get("last_run_id", 0) if rec else 0
+        # Oldest first, so first_failed_at and last_failed_at land in order.
+        new = [
+            a
+            for a in reversed(attempts.get(target["job"], []))
+            if a["run_id"] > watermark
+            and a["conclusion"] in STRIKE_CONCLUSIONS
+            and a["event"] in STRIKE_EVENTS
+        ]
+        if not new:
+            # Nothing was counted, so the watermark must NOT move. A job that
+            # is still running has conclusion None and lands here; advancing
+            # past its run would lose that strike forever once it concluded.
+            continue
+
+        newest = new[-1]
+        if rec is None:
+            rec = updated[tag] = {
+                "language": target["language"],
+                "system": target["system"],
+                "version": target["version"],
+                "srcml_version": target["srcml_version"],
+                "count": 0,
+                "first_failed_at": new[0]["attempted_at"],
+            }
+        elif rec.get("count", 0) == 0:
+            # Was passing (or is brand new); this is the start of a fresh streak.
+            rec["first_failed_at"] = new[0]["attempted_at"]
+        rec["count"] = rec.get("count", 0) + len(new)
+        rec["last_failed_at"] = newest["attempted_at"]
+        rec["last_run_id"] = newest["run_id"]
+        rec["last_run_url"] = newest["run_url"]
+
+    for tag in list(updated):
+        rec = updated[tag]
+        if tag not in live:
+            # The lockfiles no longer call for this tag — the system was
+            # dropped, or its version was re-pinned so the tag changed and
+            # strikes correctly start over. Languages whose lockfile is missing
+            # are exempt: iter_targets skipped them, so pruning here would wipe
+            # a whole language's ledger on a partial checkout.
+            if rec.get("language") not in stale:
+                del updated[tag]
+            continue
+        if rec.get("count", 0) == 0 and rec.get("last_run_id", 0) < oldest_run_id:
+            # A zeroed record whose watermark predates everything still visible
+            # is behaviourally identical to no record at all: every attempt the
+            # scan can observe is newer, so it would be counted either way.
+            del updated[tag]
+
+    return updated
+
+
+def build_rows(
+    targets: list[dict],
+    releases: dict[str, dict],
+    outcomes: dict[str, dict],
+    failures: dict[str, dict],
+    max_failures: int,
+) -> list[dict]:
+    rows = []
+    for target in targets:
+        tag = target["tag"]
+        sysrec = target["sysrec"]
+        rel = releases.get(tag)
+        # Fall back to the pre-rename job name so build-log links survive the
+        # transition; see legacy_job_name.
+        outcome = outcomes.get(target["job"]) or outcomes.get(target["legacy_job"]) or {}
+        rec = failures.get(tag, {})
+        strikes = rec.get("count", 0)
+
+        # A published release is the ground truth; everything below it only
+        # explains what happened to the ones that are not there.
+        if rel:
+            status = "published"
+        elif strikes >= max_failures:
+            status = "quarantined"
+        elif outcome.get("conclusion") == "failure":
+            status = "failed"
+        elif outcome.get("conclusion") in ("cancelled", "timed_out"):
+            status = outcome["conclusion"]
+        elif strikes:
+            # The failing run has scrolled out of the scan window, but the
+            # ledger remembers it. This is what keeps a quarantined system's
+            # build-log link alive indefinitely.
+            status = "failed"
+        else:
+            status = "pending"
+
+        # Publishing zeroes the count, so a published row still reports its
+        # successful run rather than the last failure before it.
+        if strikes:
+            run_url = rec.get("last_run_url", "") or outcome.get("run_url", "")
+            attempted_at = rec.get("last_failed_at", "") or outcome.get("attempted_at", "")
+        else:
+            run_url = outcome.get("run_url", "")
+            attempted_at = outcome.get("attempted_at", "")
+
+        rows.append(
+            {
+                "language": target["language"],
+                "language_display": LANGUAGES[target["language"]][2],
+                "rank": target["rank"],
+                "system": sysrec.name,
+                "version": sysrec.version,
+                "version_kind": sysrec.version_kind,
+                "commit": sysrec.commit,
+                "license": sysrec.license,
+                "srcml_version": target["srcml_version"],
+                "tag": tag,
+                "status": status,
+                "published": bool(rel),
+                "strikes": strikes,
+                "last_run_url": run_url,
+                "last_attempt_at": attempted_at,
+                **(rel or {}),
+            }
+        )
     return rows
 
 
 STATUS_LABEL = {
     "published": "",
     "failed": "❌ failed",
+    "quarantined": "⛔ failed (not retried)",
     "cancelled": "⏹ cancelled",
     "timed_out": "⏱ timed out",
     "pending": "_pending_",
 }
 
 
-def render_markdown(rows: list[dict], repo: str) -> str:
+def render_markdown(rows: list[dict], repo: str, max_failures: int) -> str:
     published = [r for r in rows if r["published"]]
-    failed = [r for r in rows if r["status"] == "failed"]
+    failed = [r for r in rows if r["status"] in FAILING_STATUSES]
     total_bytes = sum(r.get("bytes_compressed", 0) for r in published)
 
     out = [
@@ -170,14 +401,22 @@ def render_markdown(rows: list[dict], repo: str) -> str:
         out += [
             f"⚠️ **{len(failed)} system(s) currently failing to build.** Archives are "
             "published only when they are well-formed XML, so a failure here usually "
-            "means `srcml` could not produce a valid archive for that source.",
+            "means `srcml` could not produce a valid archive for that source. After "
+            f"{max_failures} consecutive failures a system stops being retried; run "
+            "the **Reconcile archives** workflow with `retry_failed: true` to attempt "
+            "one again.",
             "",
         ]
         for r in failed:
             link = f" — [build log]({r['last_run_url']})" if r["last_run_url"] else ""
+            note = (
+                f" — {r['strikes']} failed attempts, no longer retried"
+                if r["status"] == "quarantined"
+                else ""
+            )
             out.append(
                 f"- `{r['language']}` **{r['system']}** `{r['version']}` "
-                f"(srcml {r['srcml_version']}){link}"
+                f"(srcml {r['srcml_version']}){note}{link}"
             )
         out.append("")
 
@@ -187,7 +426,7 @@ def render_markdown(rows: list[dict], repo: str) -> str:
 
     for language, group in by_language.items():
         done = sum(1 for r in group if r["published"])
-        bad = sum(1 for r in group if r["status"] == "failed")
+        bad = sum(1 for r in group if r["status"] in FAILING_STATUSES)
         heading = f"{done}/{len(group)} published."
         if bad:
             heading += f" **{bad} failing.**"
@@ -243,26 +482,46 @@ def main() -> int:
     ap.add_argument("--repo", default=os.environ.get("GITHUB_REPOSITORY", ""))
     ap.add_argument("--out", type=Path, default=REPO_ROOT / "INDEX.md")
     ap.add_argument("--json", type=Path, default=REPO_ROOT / "index.json")
+    ap.add_argument(
+        "--failures",
+        type=Path,
+        help="strike ledger to read and update (default: config/failures.json)",
+    )
     ap.add_argument("--token")
     args = ap.parse_args()
 
     if not args.repo:
         ap.error("--repo is required outside Actions (no $GITHUB_REPOSITORY)")
 
+    ledger = args.failures or failures_path()
     policy = load_policy()
+    max_failures = policy["build"]["max_failures"]
+
     gh = GitHub(token=args.token)
     releases = collect_releases(gh, args.repo)
-    outcomes = collect_job_outcomes(gh, args.repo)
-    rows = build_rows(policy, releases, outcomes)
+    attempts, oldest_run_id = collect_job_attempts(gh, args.repo)
+    targets = iter_targets(policy)
 
-    args.out.write_text(render_markdown(rows, args.repo))
+    failures = apply_strikes(
+        load_failures(ledger),
+        attempts,
+        targets,
+        published=set(releases),
+        oldest_run_id=oldest_run_id,
+        stale=stale_languages(policy),
+    )
+    rows = build_rows(targets, releases, latest_outcomes(attempts), failures, max_failures)
+
+    args.out.write_text(render_markdown(rows, args.repo, max_failures))
     args.json.write_text(json.dumps({"repo": args.repo, "archives": rows}, indent=1) + "\n")
+    write_failures(failures, ledger)
 
     done = sum(1 for r in rows if r["published"])
-    bad = sum(1 for r in rows if r["status"] == "failed")
+    bad = sum(1 for r in rows if r["status"] in FAILING_STATUSES)
+    walled = sum(1 for r in rows if r["status"] == "quarantined")
     print(
-        f"wrote {args.out} and {args.json}: "
-        f"{done}/{len(rows)} published, {bad} failing",
+        f"wrote {args.out}, {args.json} and {ledger}: "
+        f"{done}/{len(rows)} published, {bad} failing ({walled} quarantined)",
         file=sys.stderr,
     )
     return 0

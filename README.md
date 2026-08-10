@@ -31,13 +31,17 @@ config/<lang>.lock.toml     the systems, pinned to commit SHAs
         |
         v
   reconcile.yml (nightly)   desired = lockfiles x srcml versions
-        |                   have    = published releases
-        |                   build   = the difference, capped per run
-        v
+        |     ^             have    = published releases
+        |     |             build   = the difference, capped per run,
+        |     |                       minus anything quarantined
+        v     |
   GitHub Releases           one release per archive
-        |
-        v
-  index.yml                 INDEX.md + index.json
+        |     |
+        v     |
+  index.yml   |             INDEX.md + index.json
+        |     |
+        +-----+             config/failures.json — strike counts, the one
+                            feedback edge in the system
 ```
 
 Git records **what should exist**; Releases record **what does exist**. Nothing is committed
@@ -99,6 +103,8 @@ See [docs/archive-format.md](docs/archive-format.md).
 | Refresh the system list now | run the **Discover systems** workflow |
 | Build outstanding archives now | run the **Reconcile archives** workflow |
 | Try a build without publishing | run either workflow with `dry_run: true` |
+| Retry a quarantined system | run **Reconcile archives** with `retry_failed: true` |
+| Change the failure threshold | `build.max_failures` in `config/policy.toml` |
 | Run the tests | `python3 -m unittest discover -s tests -t .` |
 
 Everything is stdlib-only Python plus `bash`, `git`, `zstd`, and `jq`. There is nothing to
@@ -114,6 +120,28 @@ link to its build log, rather than being blocklisted or published broken.
 when a GNU `__attribute__` spans a `#ifdef`/`#endif`. It is a srcml defect rather than a
 pipeline one — srcMLLargeSystems' own published kernel baseline has it too. See
 [docs/archive-format.md](docs/archive-format.md#known-srcml-defect).
+
+Retrying such a build every night forever costs a runner slot and achieves nothing, so failures
+are counted. After `build.max_failures` (3) consecutive nightly failures a
+`(system, version, srcml version)` triple is **quarantined**: it stops being planned, but stays
+in the lockfiles and stays in INDEX.md as failed, with a link to its last build log that
+survives even after that run ages out of the Actions history.
+
+Counts live in [`config/failures.json`](config/failures.json), written by the index workflow and
+read by the reconciler. Quarantine is *derived* from the count, so lowering `max_failures` takes
+effect on the next reconcile. A successful build resets the count, so a system that starts
+working again returns to the rotation on its own. To force an attempt, run **Reconcile archives**
+with `retry_failed: true` — quarantined systems go to the front of the queue, and manual runs
+never add strikes, so a failed retry costs nothing.
+
+Quarantine and the blocklist solve different problems:
+
+| | [`blocklist.txt`](config/blocklist.txt) | quarantine |
+| --- | --- | --- |
+| set by | you | the pipeline |
+| scope | the whole repository | one (system, version, srcml version) |
+| effect | dropped at discovery, leaves the lockfiles | stays in the lockfiles and the index |
+| undone by | editing the file, re-running discovery | a successful build, or `retry_failed` |
 
 ### Rate limits
 

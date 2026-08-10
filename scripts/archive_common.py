@@ -61,6 +61,14 @@ def load_policy(path: Path | None = None) -> dict:
             f"policy.toml: build.max_jobs_per_run must be 1..256 "
             f"(GitHub caps a matrix at 256 jobs per run), got {cap}"
         )
+
+    strikes = policy["build"]["max_failures"]
+    if strikes < 1:
+        raise SystemExit(
+            f"policy.toml: build.max_failures must be >= 1 "
+            f"(quarantine is `count >= max_failures`, so 0 would quarantine "
+            f"everything; set it high to effectively disable), got {strikes}"
+        )
     return policy
 
 
@@ -74,6 +82,95 @@ def load_blocklist(path: Path | None = None) -> set[str]:
         if line:
             entries.add(line.lower())
     return entries
+
+
+# --------------------------------------------------------------------------
+# failure ledger
+#
+# The automatic half of "stop building this"; blocklist.txt above is the manual
+# half. The blocklist is permanent and repo-scoped and drops a system at
+# discovery; quarantine is automatic, reversible, and scoped to one
+# (system, version, srcml version) triple, and only stops it being *planned* —
+# the system stays in the lockfiles and stays visible in the index as failed.
+#
+# Written by scripts/render_index.py, read by scripts/plan_work.py.
+# --------------------------------------------------------------------------
+
+FAILURES_SCHEMA = 1
+
+# Kept ASCII-only: json.dumps escapes non-ASCII by default, so an em dash here
+# would be written to the committed file as an escape sequence instead.
+_FAILURES_BANNER = (
+    "scripts/render_index.py (do not hand-edit). To retry a quarantined system, "
+    "run the Reconcile archives workflow with retry_failed: true."
+)
+
+
+def failures_path() -> Path:
+    """Resolved lazily, like lockfile_path: tests repoint CONFIG_DIR."""
+    return CONFIG_DIR / "failures.json"
+
+
+def load_failures(path: Path | None = None) -> dict[str, dict]:
+    """Map release tag -> failure record. A missing file is an empty ledger.
+
+    Never raises on a malformed or future-schema file. This is read by the
+    nightly reconciler, and refusing to plan any work at all is a far worse
+    outcome than planning a build that has been failing.
+    """
+    path = path or failures_path()
+    if not path.exists():
+        return {}
+    try:
+        data = json.loads(path.read_text())
+    except (json.JSONDecodeError, OSError) as exc:
+        print(f"  warning: unreadable {path} ({exc}); treating as empty", file=sys.stderr)
+        return {}
+    schema = data.get("schema")
+    if schema != FAILURES_SCHEMA:
+        print(
+            f"  warning: {path} has schema {schema!r}, expected {FAILURES_SCHEMA}; "
+            f"treating as empty",
+            file=sys.stderr,
+        )
+        return {}
+    failures = data.get("failures")
+    return failures if isinstance(failures, dict) else {}
+
+
+def write_failures(failures: dict[str, dict], path: Path | None = None) -> str:
+    """Emit the ledger deterministically and return the text written.
+
+    Sorted keys and a fixed indent for the same reason write_lockfile is
+    byte-stable: this file is committed by the index workflow on every render,
+    so an unchanged ledger must produce an unchanged file or the git log fills
+    with key-reordering noise.
+    """
+    path = path or failures_path()
+    text = json.dumps(
+        {
+            "schema": FAILURES_SCHEMA,
+            "generated_by": _FAILURES_BANNER,
+            "failures": failures,
+        },
+        indent=1,
+        sort_keys=True,
+    ) + "\n"
+    path.write_text(text)
+    return text
+
+
+def quarantined_tags(failures: dict[str, dict], max_failures: int) -> set[str]:
+    """Tags that have hit the strike limit.
+
+    Derived rather than stored, so changing build.max_failures takes effect on
+    the next reconcile without having to rewrite the ledger.
+    """
+    return {
+        tag
+        for tag, rec in failures.items()
+        if rec.get("count", 0) >= max_failures
+    }
 
 
 # --------------------------------------------------------------------------
@@ -322,7 +419,20 @@ class GitHub:
         body, _ = self.request(path, params)
         return body
 
-    def paginate(self, path: str, params: dict | None = None, max_pages: int = 10):
+    def paginate(
+        self,
+        path: str,
+        params: dict | None = None,
+        max_pages: int = 10,
+        key: str | None = None,
+    ):
+        """Yield items across pages.
+
+        `key` names the field holding the list for endpoints that wrap it under
+        something other than "items" — /actions/runs/{id}/jobs returns
+        {"total_count": N, "jobs": [...]}, and without `key` the fallback below
+        would yield the *dict keys* rather than the jobs.
+        """
         params = dict(params or {})
         params.setdefault("per_page", 100)
         page = 1
@@ -331,7 +441,10 @@ class GitHub:
             body, headers = self.request(path, params)
             if not body:
                 return
-            items = body["items"] if isinstance(body, dict) and "items" in body else body
+            if key:
+                items = body.get(key, [])
+            else:
+                items = body["items"] if isinstance(body, dict) and "items" in body else body
             if not items:
                 return
             yield from items

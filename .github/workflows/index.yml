@@ -13,14 +13,23 @@ on:
     branches: [mainline]
     paths:
       - "config/*.lock.toml"
+      - "config/failures.json"
       - "scripts/render_index.py"
 
+# Safe to cancel: strike counting is idempotent (each ledger record remembers
+# the newest run it has counted), and a superseding render always scans a
+# superset of the cancelled one's window. Cancellation defers a strike, never
+# drops one.
 concurrency:
   group: index
   cancel-in-progress: true
 
 permissions:
   contents: write
+  # render_index.py reads the reconcile run history to report build status and
+  # count failures. This works anonymously while the repo is public; declaring
+  # it keeps that from silently becoming a slow 403-retry loop if it is not.
+  actions: read
 
 jobs:
   index:
@@ -36,12 +45,15 @@ jobs:
       - name: Commit if changed
         run: |
           set -euo pipefail
-          if git diff --quiet -- INDEX.md index.json; then
+          # config/failures.json is the strike ledger the reconciler reads back
+          # to decide what to skip. It has to be committed here or the counts
+          # are recomputed from scratch every night and never reach the limit.
+          if git diff --quiet -- INDEX.md index.json config/failures.json; then
             echo "index unchanged"
             exit 0
           fi
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add INDEX.md index.json
+          git add INDEX.md index.json config/failures.json
           git commit -m "chore: refresh archive index"
           git push

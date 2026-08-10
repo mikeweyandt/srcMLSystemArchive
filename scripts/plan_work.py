@@ -25,8 +25,10 @@ from pathlib import Path
 from archive_common import (
     LANGUAGES,
     GitHub,
+    load_failures,
     load_policy,
     lockfile_path,
+    quarantined_tags,
     read_lockfile,
     release_tag,
     release_title,
@@ -118,6 +120,11 @@ def main() -> int:
     ap.add_argument("--limit", type=int, help="override build.max_jobs_per_run")
     ap.add_argument("--language", help="restrict to one language")
     ap.add_argument("--json", action="store_true", help="print the matrix to stdout")
+    ap.add_argument(
+        "--include-quarantined",
+        action="store_true",
+        help="build quarantined tags anyway, at the front of the queue",
+    )
     ap.add_argument("--token", help="GitHub token (default: $GITHUB_TOKEN)")
     args = ap.parse_args()
 
@@ -138,18 +145,39 @@ def main() -> int:
     complete, incomplete = existing_archives(gh, args.repo)
     desired = desired_work(policy, languages)
 
-    todo = [row for row in desired if row["tag"] not in complete]
+    # Systems that have failed build.max_failures times in a row. They stay in
+    # `desired` — the index must keep reporting them as failed — but drop out of
+    # the matrix so they stop consuming a runner slot every night.
+    walled = quarantined_tags(load_failures(), policy["build"]["max_failures"])
+
+    outstanding = [row for row in desired if row["tag"] not in complete]
+    skipped = [row for row in outstanding if row["tag"] in walled]
+    remaining = [row for row in outstanding if row["tag"] not in walled]
+    if args.include_quarantined:
+        # Front of the queue: a one-shot retry is pointless if a deep backlog
+        # pushes it past the per-run cap.
+        todo = skipped + remaining
+    else:
+        todo = remaining
+
     rebuilds = [row for row in todo if row["tag"] in incomplete]
     batch = todo[:limit]
 
     print(
         f"desired={len(desired)} complete={len(complete)} "
-        f"todo={len(todo)} rebuild={len(rebuilds)} batch={len(batch)}",
+        f"todo={len(todo)} rebuild={len(rebuilds)} "
+        f"quarantined={len(skipped)} batch={len(batch)}",
         file=sys.stderr,
     )
     for row in batch:
         marker = "rebuild" if row["tag"] in incomplete else "new"
+        if args.include_quarantined and row["tag"] in walled:
+            marker = "retry"
         print(f"  {marker:8} {row['tag']}", file=sys.stderr)
+    if not args.include_quarantined:
+        # Silently dropping planned work is exactly what needs to be visible.
+        for row in skipped:
+            print(f"  {'skipped':8} {row['tag']} (quarantined)", file=sys.stderr)
 
     matrix = {"include": batch}
 
@@ -161,6 +189,7 @@ def main() -> int:
             fh.write(f"matrix={json.dumps(matrix)}\n")
             fh.write(f"count={len(batch)}\n")
             fh.write(f"todo={len(todo)}\n")
+            fh.write(f"quarantined={len(skipped)}\n")
             fh.write(f"has_work={'true' if batch else 'false'}\n")
             fh.write(f"runner={policy['srcml']['runner']}\n")
             fh.write(f"ubuntu={policy['srcml']['ubuntu']}\n")
@@ -173,6 +202,12 @@ def main() -> int:
             fh.write(f"- desired archives: **{len(desired)}**\n")
             fh.write(f"- already published: **{len(complete)}**\n")
             fh.write(f"- outstanding: **{len(todo)}**\n")
+            if skipped:
+                state = "retried anyway" if args.include_quarantined else "not retried"
+                fh.write(
+                    f"- quarantined (>= {policy['build']['max_failures']} failures, "
+                    f"{state}): **{len(skipped)}**\n"
+                )
             fh.write(f"- building this run: **{len(batch)}** (cap {limit})\n\n")
             if batch:
                 fh.write("| | language | system | version | srcml |\n")
@@ -187,6 +222,11 @@ def main() -> int:
                 fh.write(
                     f"\n_{len(todo) - len(batch)} archive(s) deferred to the next run._\n"
                 )
+            if skipped and not args.include_quarantined:
+                fh.write("\n**Quarantined** (re-run this workflow with `retry_failed: true`):\n\n")
+                for row in skipped:
+                    fh.write(f"- `{row['language']}` {row['name']} `{row['version']}` "
+                             f"(srcml {row['srcml_version']})\n")
 
     if args.json:
         print(json.dumps(matrix, indent=2))

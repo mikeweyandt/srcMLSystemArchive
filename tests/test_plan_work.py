@@ -12,7 +12,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from archive_common import Lockfile, System, write_lockfile  # noqa: E402
+from archive_common import (  # noqa: E402
+    Lockfile,
+    System,
+    quarantined_tags,
+    write_lockfile,
+)
 import archive_common  # noqa: E402
 import plan_work  # noqa: E402
 
@@ -21,7 +26,12 @@ def make_policy(languages, versions=("1.1.0",), count=2):
     return {
         "targets": {"count": count, "languages": list(languages)},
         "srcml": {"versions": list(versions), "ubuntu": "24.04", "runner": "ubuntu-24.04"},
-        "build": {"max_jobs_per_run": 50, "timeout_minutes": 120, "max_asset_bytes": 2147483648},
+        "build": {
+            "max_jobs_per_run": 50,
+            "timeout_minutes": 120,
+            "max_asset_bytes": 2147483648,
+            "max_failures": 3,
+        },
         "filters": {},
     }
 
@@ -145,6 +155,55 @@ class TestReconcileDiff(unittest.TestCase):
         todo = [r for r in self.rows if r["tag"] not in complete]
         self.assertIn(broken["tag"], {r["tag"] for r in todo})
         self.assertIn(broken["tag"], incomplete)
+
+
+class TestQuarantine(unittest.TestCase):
+    """The filter that stops a hopeless system consuming a slot every night."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self._orig = archive_common.CONFIG_DIR
+        archive_common.CONFIG_DIR = Path(self.tmp.name)
+        self.addCleanup(lambda: setattr(archive_common, "CONFIG_DIR", self._orig))
+        lock = Lockfile(language="c", srcml_flags=["-r"], systems=[system(i) for i in range(1, 4)])
+        write_lockfile(lock, Path(self.tmp.name) / "c.lock.toml")
+        self.rows = plan_work.desired_work(make_policy(["c"]), ["c"])
+        self.walled = self.rows[1]["tag"]
+        self.failures = {
+            self.rows[0]["tag"]: {"count": 2},          # below the limit
+            self.walled: {"count": 3},                  # at the limit
+        }
+
+    def test_only_tags_at_the_limit_are_quarantined(self):
+        self.assertEqual({self.walled}, quarantined_tags(self.failures, 3))
+
+    def test_quarantined_tag_is_dropped_from_todo(self):
+        walled = quarantined_tags(self.failures, 3)
+        todo = [r for r in self.rows if r["tag"] not in walled]
+        self.assertEqual(2, len(todo))
+        self.assertNotIn(self.walled, {r["tag"] for r in todo})
+
+    def test_a_tag_below_the_threshold_is_still_built(self):
+        walled = quarantined_tags(self.failures, 3)
+        self.assertIn(self.rows[0]["tag"], {r["tag"] for r in self.rows if r["tag"] not in walled})
+
+    def test_include_quarantined_puts_them_at_the_front(self):
+        # Retrying is useless if the backlog pushes the retry past the cap.
+        walled = quarantined_tags(self.failures, 3)
+        skipped = [r for r in self.rows if r["tag"] in walled]
+        remaining = [r for r in self.rows if r["tag"] not in walled]
+        todo = skipped + remaining
+        self.assertEqual(self.walled, todo[0]["tag"])
+        self.assertEqual(len(self.rows), len(todo))
+
+    def test_quarantined_rows_stay_in_desired_work(self):
+        # They must keep appearing in the index as failed; only the matrix
+        # drops them.
+        self.assertIn(self.walled, {r["tag"] for r in self.rows})
+
+    def test_empty_ledger_quarantines_nothing(self):
+        self.assertEqual(set(), quarantined_tags({}, 3))
 
 
 if __name__ == "__main__":
