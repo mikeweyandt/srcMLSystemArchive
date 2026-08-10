@@ -47,8 +47,12 @@ MAX_RUNS_SCANNED = 20
 # plan_work, plus the plan and report jobs, so three pages always covers a run.
 MAX_JOB_PAGES = 3
 
-# What counts as a strike. A cancelled job says nothing about the system — it
-# says a human or a newer run intervened.
+# What counts as a strike, and what gets reported as "failed". A timeout is
+# not a capacity problem: srcml does not legitimately need two hours on a
+# source tree, so a job that hits build.timeout_minutes has almost always hung
+# during processing. That is a failure, and it is reported as one rather than
+# as its own status. A cancelled job, by contrast, says nothing about the
+# system: it says a human or a newer run intervened.
 STRIKE_CONCLUSIONS = frozenset({"failure", "timed_out"})
 
 # Only the nightly schedule is the retry loop that quarantine governs.
@@ -61,6 +65,10 @@ STRIKE_CONCLUSIONS = frozenset({"failure", "timed_out"})
 # retry_failed escape hatch free.
 STRIKE_EVENTS = frozenset({"schedule"})
 
+# Statuses the index reports as failing. Every STRIKE_CONCLUSIONS outcome maps
+# into one of these, so a system that is accruing strikes is always visible as
+# failing on the way to being quarantined rather than dropping out of the build
+# with no warning ever shown.
 FAILING_STATUSES = ("failed", "quarantined")
 
 
@@ -328,10 +336,10 @@ def build_rows(
             status = "published"
         elif strikes >= max_failures:
             status = "quarantined"
-        elif outcome.get("conclusion") == "failure":
+        elif outcome.get("conclusion") in STRIKE_CONCLUSIONS:
             status = "failed"
-        elif outcome.get("conclusion") in ("cancelled", "timed_out"):
-            status = outcome["conclusion"]
+        elif outcome.get("conclusion") == "cancelled":
+            status = "cancelled"
         elif strikes:
             # The failing run has scrolled out of the scan window, but the
             # ledger remembers it. This is what keeps a quarantined system's
@@ -377,7 +385,6 @@ STATUS_LABEL = {
     "failed": "❌ failed",
     "quarantined": "⛔ failed (not retried)",
     "cancelled": "⏹ cancelled",
-    "timed_out": "⏱ timed out",
     "pending": "_pending_",
 }
 
@@ -400,11 +407,11 @@ def render_markdown(rows: list[dict], repo: str, max_failures: int) -> str:
     if failed:
         out += [
             f"⚠️ **{len(failed)} system(s) currently failing to build.** Archives are "
-            "published only when they are well-formed XML, so a failure here usually "
-            "means `srcml` could not produce a valid archive for that source. After "
-            f"{max_failures} consecutive failures a system stops being retried; run "
-            "the **Reconcile archives** workflow with `retry_failed: true` to attempt "
-            "one again.",
+            "published only when they are well-formed XML, so a failure here means "
+            "`srcml` either could not produce a valid archive for that source or hung "
+            f"trying. After {max_failures} consecutive failures a system stops being "
+            "retried; run the **Reconcile archives** workflow with `retry_failed: true` "
+            "to attempt one again.",
             "",
         ]
         for r in failed:

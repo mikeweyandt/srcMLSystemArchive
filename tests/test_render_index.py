@@ -340,6 +340,48 @@ class TestBuildRows(LockfileTestCase):
     def test_untouched_system_is_pending(self):
         self.assertEqual("pending", self.rows()[0]["status"])
 
+    def test_timed_out_is_reported_as_plain_failed(self):
+        # srcml does not legitimately need two hours on a source tree, so a
+        # timeout is a hang. It is a failure, not a status of its own.
+        outcomes = {self.target["job"]: {
+            "conclusion": "timed_out", "run_url": "u", "attempted_at": "t"
+        }}
+        row = self.rows(outcomes=outcomes)[0]
+        self.assertEqual("failed", row["status"])
+        md = render_index.render_markdown([row], "o/r", 3)
+        self.assertIn("1 system(s) currently failing", md)
+        self.assertIn("**1 failing.**", md)
+        self.assertNotIn("timed out", md)
+
+    def test_cancelled_is_not_reported_as_failing(self):
+        # The mirror image: cancelled does not strike, so it must not be
+        # counted as failing either.
+        outcomes = {self.target["job"]: {
+            "conclusion": "cancelled", "run_url": "u", "attempted_at": "t"
+        }}
+        row = self.rows(outcomes=outcomes)[0]
+        self.assertEqual("cancelled", row["status"])
+        self.assertNotIn(row["status"], render_index.FAILING_STATUSES)
+        self.assertNotIn("currently failing", render_index.render_markdown([row], "o/r", 3))
+
+    def test_every_striking_conclusion_is_reported_as_failing(self):
+        # Guards the invariant directly: anything that accrues strikes must be
+        # visible as failing on the way to quarantine, so a future addition to
+        # STRIKE_CONCLUSIONS cannot silently skip the display side.
+        for conclusion in render_index.STRIKE_CONCLUSIONS:
+            outcomes = {self.target["job"]: {
+                "conclusion": conclusion, "run_url": "u", "attempted_at": "t"
+            }}
+            with self.subTest(conclusion=conclusion):
+                self.assertIn(
+                    self.rows(outcomes=outcomes)[0]["status"],
+                    render_index.FAILING_STATUSES,
+                )
+
+    def test_every_failing_status_has_a_label(self):
+        for status in render_index.FAILING_STATUSES:
+            self.assertIn(status, render_index.STATUS_LABEL)
+
     def test_quarantined_renders_as_failed_and_says_not_retried(self):
         failures = {self.tag: {"count": 3, "last_run_url": "https://example/runs/9"}}
         md = render_index.render_markdown(self.rows(failures=failures), "o/r", 3)

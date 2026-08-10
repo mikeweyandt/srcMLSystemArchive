@@ -59,6 +59,10 @@ max_jobs_per_run = 50
 
 # Per-archive ceiling. The hard Actions limit is 6h; cut it off well before
 # that so one pathological repo cannot monopolize a runner slot.
+#
+# Hitting this is treated as an ordinary build failure, and strikes like one:
+# srcml does not legitimately need two hours on a source tree, so a timeout is
+# nearly always a hang during processing rather than a system needing longer.
 timeout_minutes = 120
 
 # Consecutive nightly failures after which a (system, version, srcml version)

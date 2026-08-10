@@ -127,6 +127,11 @@ are counted. After `build.max_failures` (3) consecutive nightly failures a
 in the lockfiles and stays in INDEX.md as failed, with a link to its last build log that
 survives even after that run ages out of the Actions history.
 
+A build that exceeds `build.timeout_minutes` counts as an ordinary failure and is reported as
+one. srcml does not legitimately need two hours on a source tree, so a timeout is nearly always
+a hang during processing rather than a system that merely needs longer. A *cancelled* run does
+not count: it says a human or a newer run intervened, not anything about the system.
+
 Counts live in [`config/failures.json`](config/failures.json), written by the index workflow and
 read by the reconciler. Quarantine is *derived* from the count, so lowering `max_failures` takes
 effect on the next reconcile. A successful build resets the count, so a system that starts
