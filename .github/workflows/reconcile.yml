@@ -1,0 +1,116 @@
+name: Reconcile archives
+
+# Builds whatever the lockfiles call for but the Releases do not yet contain.
+# Split into a cheap planning job and a fanned-out build job so a run that has
+# nothing to do costs one runner-minute.
+
+on:
+  schedule:
+    # Nightly. Each run builds up to build.max_jobs_per_run archives, so a large
+    # backlog drains over several nights rather than in one enormous run.
+    - cron: "0 4 * * *"
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "Max archives to build this run (default: policy build.max_jobs_per_run)"
+        required: false
+        type: string
+      language:
+        description: "Restrict to one language (c, cpp, csharp, java, python)"
+        required: false
+        type: string
+      dry_run:
+        description: "Build and upload artifacts without publishing releases"
+        required: false
+        type: boolean
+        default: false
+
+# Two overlapping runs would build the same missing archives twice, since the
+# second plans before the first publishes anything.
+concurrency:
+  group: reconcile
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      has_work: ${{ steps.plan.outputs.has_work }}
+      count: ${{ steps.plan.outputs.count }}
+      todo: ${{ steps.plan.outputs.todo }}
+      runner: ${{ steps.plan.outputs.runner }}
+      ubuntu: ${{ steps.plan.outputs.ubuntu }}
+      timeout: ${{ steps.plan.outputs.timeout }}
+      max_asset_bytes: ${{ steps.plan.outputs.max_asset_bytes }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Plan outstanding work
+        id: plan
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python3 scripts/plan_work.py \
+            --repo "${{ github.repository }}" \
+            ${{ inputs.limit && format('--limit {0}', inputs.limit) || '' }} \
+            ${{ inputs.language && format('--language {0}', inputs.language) || '' }}
+
+  build:
+    needs: plan
+    if: needs.plan.outputs.has_work == 'true'
+    runs-on: ${{ needs.plan.outputs.runner }}
+    timeout-minutes: ${{ fromJSON(needs.plan.outputs.timeout) }}
+    strategy:
+      # One unparseable system must not cancel the other 49.
+      fail-fast: false
+      # Below the 256-job matrix cap by construction (plan_work clamps the
+      # limit), and throttled so a batch does not saturate the whole account's
+      # concurrency for hours.
+      max-parallel: 10
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    name: ${{ matrix.language }} · ${{ matrix.name }} · ${{ matrix.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate and publish
+        uses: ./.github/actions/generate-archive
+        with:
+          language: ${{ matrix.language }}
+          system: ${{ matrix.name }}
+          repo_url: ${{ matrix.repo }}
+          version: ${{ matrix.version }}
+          version_kind: ${{ matrix.version_kind }}
+          commit: ${{ matrix.commit }}
+          license: ${{ matrix.license }}
+          srcml_version: ${{ matrix.srcml_version }}
+          srcml_flags: ${{ matrix.srcml_flags }}
+          release_tag: ${{ matrix.tag }}
+          release_title: ${{ matrix.title }}
+          ubuntu: ${{ needs.plan.outputs.ubuntu }}
+          max_asset_bytes: ${{ needs.plan.outputs.max_asset_bytes }}
+          dry_run: ${{ inputs.dry_run && 'true' || 'false' }}
+          github_token: ${{ github.token }}
+
+  # Always runs, so a batch where several systems failed still reports rather
+  # than leaving the failures buried in individual job logs.
+  report:
+    needs: [plan, build]
+    if: always() && needs.plan.outputs.has_work == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Summarize
+        run: |
+          {
+            echo "## Reconcile result"
+            echo
+            echo "- attempted: **${{ needs.plan.outputs.count }}**"
+            echo "- outstanding before this run: **${{ needs.plan.outputs.todo }}**"
+            echo "- build outcome: **${{ needs.build.result }}**"
+          } >> "$GITHUB_STEP_SUMMARY"
+          if [ "${{ needs.build.result }}" = "failure" ]; then
+            echo "::warning::at least one archive failed; see the matrix jobs above"
+          fi

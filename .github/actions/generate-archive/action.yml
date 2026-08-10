@@ -1,0 +1,266 @@
+name: Generate archive
+description: >
+  Run a pinned srcml release over one system at a pinned commit and publish the
+  compressed srcML archive as a GitHub Release.
+
+# Adapted from srcMLLargeSystems/.github/actions/generate-baseline. Two
+# structural differences: every field arrives as an input (the reconciler has
+# already resolved the config, so there is no TOML to re-read here), and there
+# is no pointer-PR step — a 500-system corpus cannot open a PR per archive.
+
+inputs:
+  language:
+    description: "Language key: c, cpp, csharp, java, python."
+    required: true
+  system:
+    description: "System in owner/repo form."
+    required: true
+  repo_url:
+    description: "Clone URL."
+    required: true
+  version:
+    description: "Human-facing version label (release tag, tag, or branch-sha)."
+    required: true
+  version_kind:
+    description: "release | tag | head."
+    required: true
+  commit:
+    description: "Commit SHA to archive. This is what actually gets checked out."
+    required: true
+  license:
+    description: "SPDX id from discovery, recorded in the manifest."
+    required: false
+    default: ""
+  srcml_version:
+    description: "srcML release to install, e.g. 1.1.0."
+    required: true
+  srcml_flags:
+    description: "Flags passed to srcml."
+    required: false
+    default: "-r -j 4 --src-encoding=UTF-8"
+  release_tag:
+    description: "Release tag to publish under. Also the asset filename stem."
+    required: true
+  release_title:
+    description: "Release title, e.g. 'C | torvalds/linux/v7.1 | srcml/v1.1.0'."
+    required: true
+  ubuntu:
+    description: "Ubuntu version whose srcml .deb to install. Must match the runner."
+    required: false
+    default: "24.04"
+  max_asset_bytes:
+    description: "Refuse to publish an asset larger than this."
+    required: false
+    default: "2147483648"
+  dry_run:
+    description: "If 'true', upload as a workflow artifact instead of publishing a release."
+    required: false
+    default: "false"
+  github_token:
+    description: "Token used to publish the release."
+    required: false
+    default: ${{ github.token }}
+
+runs:
+  using: composite
+  steps:
+    # The kernel alone is ~1.4 GB of C, and its srcML XML runs to many GB.
+    # Streaming srcml into zstd keeps the XML off disk, but the checkout still
+    # needs room, and a stock runner has only ~20 GB free. These preinstalled
+    # toolchains are worth ~30 GB and nothing here uses them.
+    - name: Reclaim runner disk
+      shell: bash
+      run: |
+        echo "before: $(df -h --output=avail / | tail -1)"
+        sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc \
+                    /usr/local/share/boost /usr/local/.ghcup \
+                    /usr/share/swift /usr/local/lib/node_modules || true
+        sudo apt-get clean || true
+        echo "after:  $(df -h --output=avail / | tail -1)"
+
+    - name: Install host deps
+      shell: bash
+      run: |
+        sudo apt-get update
+        # libxml2-utils provides xmllint, which gates archive well-formedness.
+        sudo apt-get install -y zstd git curl ca-certificates jq libxml2-utils
+
+    - name: Install pinned srcml
+      shell: bash
+      env:
+        SV: ${{ inputs.srcml_version }}
+        UBUNTU: ${{ inputs.ubuntu }}
+      run: |
+        set -euxo pipefail
+        ARCH="$(dpkg --print-architecture)"
+        URL="https://github.com/srcML/srcML/releases/download/v${SV}/srcml_${SV}-1_ubuntu${UBUNTU}_${ARCH}.deb"
+        curl -fsSL -o srcml.deb "$URL"
+        sudo apt-get install -y ./srcml.deb
+        rm -f srcml.deb
+        srcml --version
+
+    # Fetching the SHA directly rather than the tag: tags are mutable, and an
+    # archive that cannot be tied to an immutable commit is not reproducible.
+    - name: Fetch source at pinned commit
+      shell: bash
+      env:
+        REPO_URL: ${{ inputs.repo_url }}
+        COMMIT: ${{ inputs.commit }}
+        SYSTEM: ${{ inputs.system }}
+      run: |
+        set -euxo pipefail
+        mkdir -p project-src
+        cd project-src
+        git init -q
+        git remote add origin "$REPO_URL"
+        if ! git fetch --depth 1 --no-tags origin "$COMMIT"; then
+          echo "::error::could not fetch $COMMIT from $SYSTEM (force-push or deleted history?)"
+          exit 1
+        fi
+        git checkout -q FETCH_HEAD
+        # The object store is dead weight during parsing and can exceed the
+        # size of the worktree on repos with deep history.
+        rm -rf .git
+        du -sh . || true
+
+    - name: Generate archive
+      id: gen
+      shell: bash
+      env:
+        SRCML_FLAGS: ${{ inputs.srcml_flags }}
+        INPUT_DIR: project-src
+        OUTPUT_ZST: ${{ inputs.release_tag }}.xml.zst
+        STATS_JSON: ${{ inputs.release_tag }}.stats.json
+        LOG_FILE: ${{ inputs.release_tag }}.generate.log
+        MAX_ASSET_BYTES: ${{ inputs.max_asset_bytes }}
+      run: ./scripts/generate_archive.sh
+
+    # Freed before upload so a large asset is not competing with the source tree
+    # for the last of the runner's disk.
+    - name: Drop source tree
+      shell: bash
+      run: rm -rf project-src
+
+    - name: Emit manifest
+      shell: bash
+      env:
+        LANGUAGE: ${{ inputs.language }}
+        SYSTEM: ${{ inputs.system }}
+        REPO_URL: ${{ inputs.repo_url }}
+        VERSION: ${{ inputs.version }}
+        VERSION_KIND: ${{ inputs.version_kind }}
+        COMMIT: ${{ inputs.commit }}
+        LICENSE: ${{ inputs.license }}
+        SV: ${{ inputs.srcml_version }}
+        FLAGS: ${{ inputs.srcml_flags }}
+        TAG: ${{ inputs.release_tag }}
+        RAW: ${{ steps.gen.outputs.raw_bytes }}
+        ZST: ${{ steps.gen.outputs.zst_bytes }}
+        SHA: ${{ steps.gen.outputs.sha256 }}
+        UNITS: ${{ steps.gen.outputs.units }}
+        SRCML_EXIT: ${{ steps.gen.outputs.srcml_exit }}
+      run: |
+        set -euo pipefail
+        jq -n \
+          --arg     language      "$LANGUAGE" \
+          --arg     system        "$SYSTEM" \
+          --arg     repo_url      "$REPO_URL" \
+          --arg     version       "$VERSION" \
+          --arg     version_kind  "$VERSION_KIND" \
+          --arg     commit        "$COMMIT" \
+          --arg     license       "$LICENSE" \
+          --arg     srcml_version "$SV" \
+          --arg     srcml_flags   "$FLAGS" \
+          --arg     srcml_exit    "$SRCML_EXIT" \
+          --arg     asset_name    "${TAG}.xml.zst" \
+          --arg     bytes_raw     "$RAW" \
+          --arg     bytes_zst     "$ZST" \
+          --arg     units         "$UNITS" \
+          --arg     sha256        "$SHA" \
+          --arg     generated_at  "$(date --iso-8601=seconds)" \
+          --arg     runner_os     "$(lsb_release -ds 2>/dev/null || uname -a)" \
+          --argjson stats         "$(cat "${TAG}.stats.json")" \
+          '{
+            language:$language,
+            system:$system,
+            repo_url:$repo_url,
+            version:$version,
+            version_kind:$version_kind,
+            commit:$commit,
+            license:$license,
+            srcml_version:$srcml_version,
+            srcml_flags:$srcml_flags,
+            srcml_exit:($srcml_exit|tonumber),
+            asset_name:$asset_name,
+            bytes_raw:($bytes_raw|tonumber),
+            bytes_compressed:($bytes_zst|tonumber),
+            units:($units|tonumber),
+            units_by_language:$stats.units_by_language,
+            sha256:$sha256,
+            generated_at:$generated_at,
+            runner_os:$runner_os
+          }' > "${TAG}.manifest.json"
+        cat "${TAG}.manifest.json"
+        rm -f "${TAG}.stats.json"
+
+    - name: Upload as artifact (dry run)
+      if: ${{ inputs.dry_run == 'true' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: dry-run-${{ inputs.release_tag }}
+        path: |
+          ${{ inputs.release_tag }}.xml.zst
+          ${{ inputs.release_tag }}.manifest.json
+          ${{ inputs.release_tag }}.generate.log
+        retention-days: 7
+
+    # Assets are uploaded before the release exists in a complete state only in
+    # the create path; on the update path --clobber replaces a partial upload.
+    # The reconciler treats a release without its .xml.zst as unfinished, so a
+    # half-failed publish is retried rather than masking a missing archive.
+    - name: Publish release
+      if: ${{ inputs.dry_run != 'true' }}
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.github_token }}
+        TAG: ${{ inputs.release_tag }}
+        TITLE: ${{ inputs.release_title }}
+        LANGUAGE: ${{ inputs.language }}
+        SYSTEM: ${{ inputs.system }}
+        VERSION: ${{ inputs.version }}
+        VERSION_KIND: ${{ inputs.version_kind }}
+        COMMIT: ${{ inputs.commit }}
+        LICENSE: ${{ inputs.license }}
+        SV: ${{ inputs.srcml_version }}
+        UNITS: ${{ steps.gen.outputs.units }}
+        SHA: ${{ steps.gen.outputs.sha256 }}
+      run: |
+        set -euo pipefail
+        NOTES=$(cat <<EOF
+        srcML archive of \`${SYSTEM}\` at \`${VERSION}\`, parsed with srcml ${SV}.
+
+        | | |
+        |---|---|
+        | language | ${LANGUAGE} |
+        | system | [\`${SYSTEM}\`](https://github.com/${SYSTEM}) |
+        | version | \`${VERSION}\` (${VERSION_KIND}) |
+        | commit | \`${COMMIT}\` |
+        | license | ${LICENSE:-unknown} |
+        | srcml | ${SV} |
+        | units | ${UNITS} |
+        | sha256 | \`${SHA}\` |
+
+        Source is redistributed under the upstream project's own license.
+        See \`${TAG}.manifest.json\` for the full record.
+        EOF
+        )
+        if gh release view "$TAG" >/dev/null 2>&1; then
+          gh release upload "$TAG" \
+            "${TAG}.xml.zst" "${TAG}.manifest.json" "${TAG}.generate.log" --clobber
+        else
+          gh release create "$TAG" \
+            --title "$TITLE" \
+            --notes "$NOTES" \
+            --latest=false \
+            "${TAG}.xml.zst" "${TAG}.manifest.json" "${TAG}.generate.log"
+        fi

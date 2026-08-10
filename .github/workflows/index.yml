@@ -1,0 +1,47 @@
+name: Refresh index
+
+# Regenerates INDEX.md and index.json from the lockfiles plus whatever the
+# Releases currently hold, and commits the result. Runs after a reconcile so
+# newly published archives show up without anyone having to trigger it.
+
+on:
+  workflow_run:
+    workflows: ["Reconcile archives"]
+    types: [completed]
+  workflow_dispatch:
+  push:
+    branches: [mainline]
+    paths:
+      - "config/*.lock.toml"
+      - "scripts/render_index.py"
+
+concurrency:
+  group: index
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  index:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Render
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 scripts/render_index.py --repo "${{ github.repository }}"
+
+      - name: Commit if changed
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- INDEX.md index.json; then
+            echo "index unchanged"
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add INDEX.md index.json
+          git commit -m "chore: refresh archive index"
+          git push

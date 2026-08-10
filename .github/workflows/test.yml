@@ -1,0 +1,80 @@
+name: Tests
+
+on:
+  push:
+    branches: [mainline]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      # Everything here is stdlib-only on purpose, so there is nothing to
+      # install and the runner's python3 is the same interpreter the workflows
+      # use in production.
+      - name: Unit tests
+        run: python3 -m unittest discover -s tests -t . -v
+
+      - name: Lint shell
+        run: |
+          sudo apt-get update && sudo apt-get install -y shellcheck
+          shellcheck -S warning scripts/*.sh
+
+      - name: Validate config and workflow YAML
+        run: |
+          python3 - <<'PY'
+          import glob, sys, tomllib, yaml
+          for f in sorted(glob.glob(".github/**/*.yml", recursive=True)):
+              yaml.safe_load(open(f)); print("yaml ok  ", f)
+          for f in sorted(glob.glob("config/*.toml")):
+              tomllib.load(open(f, "rb")); print("toml ok  ", f)
+          PY
+
+      # A lockfile that discovery would rewrite differently means someone
+      # hand-edited it, which the reconciler would then silently act on.
+      - name: Check lockfiles are canonically formatted
+        run: |
+          python3 - <<'PY'
+          import sys
+          sys.path.insert(0, "scripts")
+          from pathlib import Path
+          from archive_common import read_lockfile, write_lockfile, load_policy
+          bad = []
+          for language in load_policy()["targets"]["languages"]:
+              path = Path("config") / f"{language}.lock.toml"
+              if not path.exists():
+                  continue
+              original = path.read_text()
+              if write_lockfile(read_lockfile(language, path), path) != original:
+                  bad.append(str(path))
+          path_list = ", ".join(bad)
+          if bad:
+              sys.exit(f"not canonically formatted (re-run discover.py): {path_list}")
+          print("lockfiles canonical")
+          PY
+
+      - name: Smoke-test the archive pipeline with a stub srcml
+        run: |
+          set -euo pipefail
+          sudo apt-get install -y zstd libxml2-utils
+          mkdir -p /tmp/stub /tmp/work/src
+          cat > /tmp/stub/srcml <<'EOF'
+          #!/usr/bin/env bash
+          [ "$1" = "--version" ] && { echo "srcml 1.1.0 (stub)"; exit 0; }
+          printf '<?xml version="1.0" encoding="UTF-8"?>\n<unit xmlns="http://www.srcML.org/srcML/src" revision="1.1.0">\n'
+          for i in $(seq 1 200); do printf '<unit revision="1.1.0" language="C" filename="f%d.c">int main(void){return 0;}</unit>\n' "$i"; done
+          printf '</unit>\n'
+          EOF
+          chmod +x /tmp/stub/srcml
+          echo 'int main(void){return 0;}' > /tmp/work/src/a.c
+          PATH="/tmp/stub:$PATH" INPUT_DIR=/tmp/work/src OUTPUT_ZST=/tmp/work/o.xml.zst \
+            STATS_JSON=/tmp/work/s.json LOG_FILE=/tmp/work/gen.log ZSTD_LEVEL=3 \
+            ./scripts/generate_archive.sh
+          test "$(jq -r .units /tmp/work/s.json)" = "200"
+          echo "pipeline smoke test passed"

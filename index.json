@@ -1,0 +1,70 @@
+{
+ "repo": "mikeweyandt/srcMLSystemArchive",
+ "archives": [
+  {
+   "language": "c",
+   "language_display": "C",
+   "rank": 1,
+   "system": "torvalds/linux",
+   "version": "v7.1",
+   "version_kind": "tag",
+   "commit": "8cd9520d35a6c38db6567e97dd93b1f11f185dc6",
+   "license": "NOASSERTION",
+   "srcml_version": "1.1.0",
+   "tag": "archive-c-torvalds-linux-v7.1-srcml-1.1.0",
+   "published": false
+  },
+  {
+   "language": "cpp",
+   "language_display": "C++",
+   "rank": 1,
+   "system": "tensorflow/tensorflow",
+   "version": "v2.21.0",
+   "version_kind": "release",
+   "commit": "a481b10260dfdf833a1b16007eead49c1d7febf3",
+   "license": "Apache-2.0",
+   "srcml_version": "1.1.0",
+   "tag": "archive-cpp-tensorflow-tensorflow-v2.21.0-srcml-1.1.0",
+   "published": false
+  },
+  {
+   "language": "csharp",
+   "language_display": "C#",
+   "rank": 1,
+   "system": "2dust/v2rayN",
+   "version": "7.24.4",
+   "version_kind": "release",
+   "commit": "635a04d74c3cb6891e144756234d50e147cf175a",
+   "license": "GPL-3.0",
+   "srcml_version": "1.1.0",
+   "tag": "archive-csharp-2dust-v2rayN-7.24.4-srcml-1.1.0",
+   "published": false
+  },
+  {
+   "language": "java",
+   "language_display": "Java",
+   "rank": 1,
+   "system": "iluwatar/java-design-patterns",
+   "version": "1.25.0",
+   "version_kind": "tag",
+   "commit": "925755fa353de726f2a7eff087f9e62a3a34f66d",
+   "license": "NOASSERTION",
+   "srcml_version": "1.1.0",
+   "tag": "archive-java-iluwatar-java-design-patterns-1.25.0-srcml-1.1.0",
+   "published": false
+  },
+  {
+   "language": "python",
+   "language_display": "Python",
+   "rank": 1,
+   "system": "NousResearch/hermes-agent",
+   "version": "v2026.8.3",
+   "version_kind": "release",
+   "commit": "3c27eb6234bf91b8ceee9e9071591b31e9b148cb",
+   "license": "MIT",
+   "srcml_version": "1.1.0",
+   "tag": "archive-python-NousResearch-hermes-agent-v2026.8.3-srcml-1.1.0",
+   "published": false
+  }
+ ]
+}

@@ -1,0 +1,15 @@
+# Systems excluded from the archive regardless of star rank.
+#
+# One `owner/repo` per line, case-insensitive. `#` starts a comment.
+#
+# The automated filters in config/policy.toml catch the common failure mode
+# (curated lists and tutorials that rank high on stars but contain little
+# code). This file is the manual escape hatch for what they miss — mirror
+# repos, datasets-as-code, generated-source repos, licensing problems, or
+# anything that repeatedly fails to parse.
+#
+# Add a comment saying why. Future you will want to know.
+
+# --- examples of the shape; remove once real entries exist ---
+# torvalds/linux            # too large for the runner disk budget
+# some-owner/some-mirror    # read-only mirror of an upstream already archived

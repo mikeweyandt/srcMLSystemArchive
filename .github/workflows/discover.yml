@@ -1,0 +1,117 @@
+name: Discover systems
+
+# Refreshes config/<lang>.lock.toml from GitHub's current top-starred repos and
+# opens a PR with the result. Discovery never publishes anything by itself — the
+# PR is the review gate where a bad pick gets caught and blocklisted before it
+# ever costs a build.
+
+on:
+  schedule:
+    # Monthly. Star rankings move slowly, and every merged change to a lockfile
+    # triggers rebuilds of whatever it added.
+    - cron: "0 3 1 * *"
+  workflow_dispatch:
+    inputs:
+      language:
+        description: "Restrict to one language (default: all in policy.toml)"
+        required: false
+        type: string
+      count:
+        description: "Override targets.count"
+        required: false
+        type: string
+      dry_run:
+        description: "Print the result without opening a PR"
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: discover
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    # At targets.count = 100 this makes a few thousand API calls and paces
+    # itself against the rate limiter rather than failing.
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Discover
+        env:
+          # GITHUB_TOKEN is capped at 1,000 requests/hour per repository, which
+          # discovery exceeds at targets.count = 100. Set a DISCOVERY_TOKEN
+          # secret (a PAT with public_repo scope) to get 5,000/hour. Without it
+          # this still completes, just slowly — the client sleeps until reset.
+          GITHUB_TOKEN: ${{ secrets.DISCOVERY_TOKEN || github.token }}
+        run: |
+          python3 scripts/discover.py \
+            ${{ inputs.language && format('--language {0}', inputs.language) || '--all' }} \
+            ${{ inputs.count && format('--count {0}', inputs.count) || '' }} \
+            --report discovery-report.json
+
+      - name: Summarize
+        run: |
+          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          report = json.load(open("discovery-report.json"))
+          print("## Discovery\n")
+          for lang, rows in report.items():
+              ok = [r for r in rows if r["accepted"]]
+              no = [r for r in rows if not r["accepted"]]
+              print(f"### {lang} — {len(ok)} selected, {len(no)} rejected\n")
+              if ok:
+                  print("| # | system | stars | version | kind | lang bytes | share | license |")
+                  print("|---|---|---|---|---|---|---|---|")
+                  for i, r in enumerate(ok, 1):
+                      print(
+                          f"| {i} | [`{r['name']}`](https://github.com/{r['name']}) "
+                          f"| {r['stars']:,} | `{r['version']}` | {r['version_kind']} "
+                          f"| {r['language_bytes']:,} | {r['language_share']:.0%} "
+                          f"| {r['license'] or '—'} |"
+                      )
+                  print()
+              if no:
+                  print("<details><summary>rejected</summary>\n")
+                  for r in no:
+                      print(f"- `{r['name']}` — {r['reason']}")
+                  print("\n</details>\n")
+          PY
+
+      - name: Show diff
+        run: git --no-pager diff --stat config/ || true
+
+      - name: Open pull request
+        if: ${{ !inputs.dry_run }}
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ github.token }}
+          commit-message: "chore: refresh system lockfiles from GitHub rankings"
+          branch: discovery/refresh
+          delete-branch: true
+          title: "Refresh system lockfiles"
+          body: |
+            Automated discovery run. Lockfiles are regenerated from GitHub's
+            current top-starred repositories per language, filtered by
+            `config/policy.toml`.
+
+            **Merging this rebuilds every archive it adds or re-pins.** Review
+            the selections in the run summary before merging, and add anything
+            unwanted to `config/blocklist.txt`.
+
+            [Run summary and full accept/reject report](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          add-paths: |
+            config/*.lock.toml
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        with:
+          name: discovery-report
+          path: discovery-report.json
+          retention-days: 30

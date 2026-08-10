@@ -1,0 +1,17 @@
+# Build scratch produced by scripts/generate_archive.sh
+project-src/
+*.xml
+*.xml.zst
+*.manifest.json
+*.generate.log
+srcml.deb
+
+# Reconciler scratch
+matrix.json
+work-plan.json
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/

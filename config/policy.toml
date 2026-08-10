@@ -1,0 +1,65 @@
+# Archive policy — the knobs that govern what gets discovered and built.
+#
+# Discovery (scripts/discover.py) reads [targets] and [filters].
+# The reconciler (scripts/plan_work.py) reads [srcml] and [build].
+schema = 1
+
+[targets]
+# Systems to archive per language. Ramp: 1 -> 10 -> 100.
+count = 1
+languages = ["c", "cpp", "csharp", "java", "python"]
+
+[filters]
+# Top-starred-by-language is a poor proxy for "system": the highest-starred
+# Python repos are markdown lists (public-apis, awesome-python), and the
+# highest-starred Java repos are tutorials. These two thresholds separate a
+# real codebase from a curated list. Measured against live data:
+#
+#   awesome-python    119 KB Python      rejected on bytes
+#   public-apis        40 KB Python      rejected on bytes
+#   yt-dlp             10 MB Python      accepted
+#   django             19 MB Python      accepted
+#   elasticsearch     272 MB Java        accepted
+#   hello-algo        1.0 MB Java  (11%) rejected on share — polyglot tutorial
+min_language_bytes = 1000000
+min_language_share = 0.40
+
+allow_archived = false
+allow_forks = false
+allow_templates = false
+
+# Archive stable versions only. With this off, torvalds/linux resolves to
+# whatever -rc tag is newest, because the kernel publishes no GitHub Releases
+# and its most recent tag is almost always a release candidate.
+allow_prerelease = false
+
+# Require a detected LICENSE file. srcML XML embeds full source text, so a repo
+# with no license at all is all-rights-reserved and a redistribution risk.
+#
+# This rejects only repos where GitHub detects no license file. It does NOT
+# reject SPDX "NOASSERTION", which means a license was found but could not be
+# machine-classified — the norm for major projects (torvalds/linux reports
+# NOASSERTION because COPYING is GPL-2.0 plus per-file SPDX tags).
+require_license = true
+
+[srcml]
+# Every lockfile system is archived once per version listed here.
+# Upstream currently publishes only 1.0.0 and 1.1.0.
+versions = ["1.1.0"]
+
+# Ubuntu release whose .deb is pulled from the srcML release page, and the
+# runner image that must match it.
+ubuntu = "24.04"
+runner = "ubuntu-24.04"
+
+[build]
+# Archives built per reconcile run. Must stay <= 256 (GitHub Actions caps a
+# matrix at 256 jobs per workflow run).
+max_jobs_per_run = 50
+
+# Per-archive ceiling. The hard Actions limit is 6h; cut it off well before
+# that so one pathological repo cannot monopolize a runner slot.
+timeout_minutes = 120
+
+# GitHub rejects release assets larger than this.
+max_asset_bytes = 2147483648
