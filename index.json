@@ -12,7 +12,7 @@
    "license": "NOASSERTION",
    "srcml_version": "1.1.0",
    "tag": "archive-c-torvalds-linux-v7.1-srcml-1.1.0",
-   "status": "pending",
+   "status": "failed",
    "published": false,
    "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31359157773",
    "last_attempt_at": "2026-08-10T05:36:59Z"
@@ -68,7 +68,7 @@
    "license": "NOASSERTION",
    "srcml_version": "1.1.0",
    "tag": "archive-java-iluwatar-java-design-patterns-1.25.0-srcml-1.1.0",
-   "status": "pending",
+   "status": "cancelled",
    "published": false,
    "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31359157773",
    "last_attempt_at": "2026-08-10T05:36:59Z"
@@ -84,10 +84,14 @@
    "license": "MIT",
    "srcml_version": "1.1.0",
    "tag": "archive-python-NousResearch-hermes-agent-v2026.8.3-srcml-1.1.0",
-   "status": "pending",
-   "published": false,
+   "status": "published",
+   "published": true,
    "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31359157773",
-   "last_attempt_at": "2026-08-10T05:36:59Z"
+   "last_attempt_at": "2026-08-10T05:36:59Z",
+   "url": "https://github.com/mikeweyandt/srcMLSystemArchive/releases/tag/archive-python-NousResearch-hermes-agent-v2026.8.3-srcml-1.1.0",
+   "download_url": "https://github.com/mikeweyandt/srcMLSystemArchive/releases/download/archive-python-NousResearch-hermes-agent-v2026.8.3-srcml-1.1.0/archive-python-NousResearch-hermes-agent-v2026.8.3-srcml-1.1.0.xml.zst",
+   "bytes_compressed": 12739097,
+   "published_at": "2026-08-10T06:04:00Z"
   }
  ]
 }
