@@ -21,3 +21,27 @@ version = "v10.11.11"
 version_kind = "release"
 commit = "1fbd8739292cce610231be93daf43368733edf63"
 license = "GPL-2.0"
+
+[[systems]]
+name = "PowerShell/PowerShell"
+repo = "https://github.com/PowerShell/PowerShell.git"
+version = "v7.6.4"
+version_kind = "release"
+commit = "abeb8444d065feeccf80bda83eed5675a37719c1"
+license = "MIT"
+
+[[systems]]
+name = "files-community/Files"
+repo = "https://github.com/files-community/Files.git"
+version = "v4.2.3"
+version_kind = "release"
+commit = "47234d70cbe096ad1bac9fd493c441dee7fd03be"
+license = "MIT"
+
+[[systems]]
+name = "ShareX/ShareX"
+repo = "https://github.com/ShareX/ShareX.git"
+version = "v21.0.0"
+version_kind = "release"
+commit = "d2502561f63fc3ff502cacd91514e3f7f2948c74"
+license = "GPL-3.0"

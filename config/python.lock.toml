@@ -21,3 +21,27 @@ version = "master-f5988cc"
 version_kind = "head"
 commit = "f5988cc09713315817df6a7e327e258013a94440"
 license = "MIT"
+
+[[systems]]
+name = "Significant-Gravitas/AutoGPT"
+repo = "https://github.com/Significant-Gravitas/AutoGPT.git"
+version = "autogpt-platform-beta-v0.7.0"
+version_kind = "release"
+commit = "ce6ab7b074a625ce591c1f41ef17276c8093087d"
+license = "NOASSERTION"
+
+[[systems]]
+name = "yt-dlp/yt-dlp"
+repo = "https://github.com/yt-dlp/yt-dlp.git"
+version = "2026.07.04"
+version_kind = "release"
+commit = "fdec00e0bf530dc6c3cc7b1dd780e95d9ae460e9"
+license = "Unlicense"
+
+[[systems]]
+name = "AUTOMATIC1111/stable-diffusion-webui"
+repo = "https://github.com/AUTOMATIC1111/stable-diffusion-webui.git"
+version = "v1.10.1"
+version_kind = "release"
+commit = "82a973c04367123ae98bd9abdf80d9eda9b910e2"
+license = "AGPL-3.0"
