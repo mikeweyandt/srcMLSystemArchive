@@ -6,7 +6,7 @@ schema = 1
 
 [targets]
 # Systems to archive per language. Ramp: 1 -> 10 -> 100.
-count = 1
+count = 2
 languages = ["c", "cpp", "csharp", "java", "python"]
 
 [filters]
