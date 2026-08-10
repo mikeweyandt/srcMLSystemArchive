@@ -44,10 +44,14 @@
    "license": "GPL-3.0",
    "srcml_version": "1.1.0",
    "tag": "archive-csharp-2dust-v2rayN-7.24.4-srcml-1.1.0",
-   "status": "pending",
-   "published": false,
-   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31358221057",
-   "last_attempt_at": "2026-08-10T05:19:20Z"
+   "status": "published",
+   "published": true,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31358334752",
+   "last_attempt_at": "2026-08-10T05:21:24Z",
+   "url": "https://github.com/mikeweyandt/srcMLSystemArchive/releases/tag/archive-csharp-2dust-v2rayN-7.24.4-srcml-1.1.0",
+   "download_url": "https://github.com/mikeweyandt/srcMLSystemArchive/releases/download/archive-csharp-2dust-v2rayN-7.24.4-srcml-1.1.0/archive-csharp-2dust-v2rayN-7.24.4-srcml-1.1.0.xml.zst",
+   "bytes_compressed": 262901,
+   "published_at": "2026-08-10T05:23:15Z"
   },
   {
    "language": "java",
