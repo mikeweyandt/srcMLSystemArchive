@@ -44,7 +44,7 @@
 | language | system | version | srcml version | size | archive |
 |---|---|---|---|---|---|
 | Java | [`iluwatar/java-design-patterns`](https://github.com/iluwatar/java-design-patterns) | `1.25.0` <sup>tag</sup> | `1.1.0` | — | [⛔ failed (not retried)](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31359157773) |
-| Java | [`Stirling-Tools/Stirling-PDF`](https://github.com/Stirling-Tools/Stirling-PDF) | `v2.14.3` | `1.1.0` | — | _pending_ |
+| Java | [`Stirling-Tools/Stirling-PDF`](https://github.com/Stirling-Tools/Stirling-PDF) | `v2.14.3` | `1.1.0` | — | [⏹ cancelled](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31399930099) |
 
 ## Python
 
