@@ -78,6 +78,4 @@ timeout_minutes = 120
 max_failures = 3
 
 # GitHub rejects release assets larger than this.
-max_asset(2/2), done.
-remote: Total 9 (delta 7), reused 8 (delta 7), pack-reused 0 (from 0)
-Unpacking objects: 100% (9/9), 2.24_bytes = 2147483648
+max_asset_bytes = 2147483648
