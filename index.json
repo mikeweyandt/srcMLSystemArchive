@@ -19,6 +19,23 @@
    "last_attempt_at": "2026-08-10T05:36:59Z"
   },
   {
+   "language": "c",
+   "language_display": "C",
+   "rank": 2,
+   "system": "microsoft/PowerToys",
+   "version": "v0.100.2",
+   "version_kind": "release",
+   "commit": "1d11b732b7ba7dbb265d1151531655fd8d83c76d",
+   "license": "MIT",
+   "srcml_version": "1.1.0",
+   "tag": "archive-c-microsoft-PowerToys-v0.100.2-srcml-1.1.0",
+   "status": "pending",
+   "published": false,
+   "strikes": 0,
+   "last_run_url": "",
+   "last_attempt_at": ""
+  },
+  {
    "language": "cpp",
    "language_display": "C++",
    "rank": 1,
@@ -38,6 +55,23 @@
    "download_url": "https://github.com/mikeweyandt/srcMLSystemArchive/releases/download/archive-cpp-tensorflow-tensorflow-v2.21.0-srcml-1.1.0/archive-cpp-tensorflow-tensorflow-v2.21.0-srcml-1.1.0.xml.zst",
    "bytes_compressed": 33273549,
    "published_at": "2026-08-10T05:31:18Z"
+  },
+  {
+   "language": "cpp",
+   "language_display": "C++",
+   "rank": 2,
+   "system": "ggml-org/llama.cpp",
+   "version": "b10342",
+   "version_kind": "release",
+   "commit": "157b81fe6dbfec7d7ce91ef7cd9c6bc0c218d6fe",
+   "license": "MIT",
+   "srcml_version": "1.1.0",
+   "tag": "archive-cpp-ggml-org-llama.cpp-b10342-srcml-1.1.0",
+   "status": "pending",
+   "published": false,
+   "strikes": 0,
+   "last_run_url": "",
+   "last_attempt_at": ""
   },
   {
    "language": "csharp",
@@ -61,6 +95,23 @@
    "published_at": "2026-08-10T05:23:15Z"
   },
   {
+   "language": "csharp",
+   "language_display": "C#",
+   "rank": 2,
+   "system": "jellyfin/jellyfin",
+   "version": "v10.11.11",
+   "version_kind": "release",
+   "commit": "1fbd8739292cce610231be93daf43368733edf63",
+   "license": "GPL-2.0",
+   "srcml_version": "1.1.0",
+   "tag": "archive-csharp-jellyfin-jellyfin-v10.11.11-srcml-1.1.0",
+   "status": "pending",
+   "published": false,
+   "strikes": 0,
+   "last_run_url": "",
+   "last_attempt_at": ""
+  },
+  {
    "language": "java",
    "language_display": "Java",
    "rank": 1,
@@ -76,6 +127,23 @@
    "strikes": 3,
    "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31359157773",
    "last_attempt_at": "2026-08-10T05:36:59Z"
+  },
+  {
+   "language": "java",
+   "language_display": "Java",
+   "rank": 2,
+   "system": "Stirling-Tools/Stirling-PDF",
+   "version": "v2.14.3",
+   "version_kind": "release",
+   "commit": "e556eba8326c8349aa0318034cfdb5c442dca21c",
+   "license": "NOASSERTION",
+   "srcml_version": "1.1.0",
+   "tag": "archive-java-Stirling-Tools-Stirling-PDF-v2.14.3-srcml-1.1.0",
+   "status": "pending",
+   "published": false,
+   "strikes": 0,
+   "last_run_url": "",
+   "last_attempt_at": ""
   },
   {
    "language": "python",
@@ -97,6 +165,23 @@
    "download_url": "https://github.com/mikeweyandt/srcMLSystemArchive/releases/download/archive-python-NousResearch-hermes-agent-v2026.8.3-srcml-1.1.0/archive-python-NousResearch-hermes-agent-v2026.8.3-srcml-1.1.0.xml.zst",
    "bytes_compressed": 12739097,
    "published_at": "2026-08-10T06:04:00Z"
+  },
+  {
+   "language": "python",
+   "language_display": "Python",
+   "rank": 2,
+   "system": "TheAlgorithms/Python",
+   "version": "master-f5988cc",
+   "version_kind": "head",
+   "commit": "f5988cc09713315817df6a7e327e258013a94440",
+   "license": "MIT",
+   "srcml_version": "1.1.0",
+   "tag": "archive-python-TheAlgorithms-Python-master-f5988cc-srcml-1.1.0",
+   "status": "pending",
+   "published": false,
+   "strikes": 0,
+   "last_run_url": "",
+   "last_attempt_at": ""
   }
  ]
 }
