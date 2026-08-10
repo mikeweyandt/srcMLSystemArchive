@@ -54,14 +54,29 @@ log "disk before:   $(df -h --output=avail . | tail -1 | tr -d ' ') available"
 # srcml's exit status is captured rather than asserted: across a 500-repo corpus
 # some inputs will make it complain, and an archive that still decompresses and
 # parses is worth keeping. The integrity check below is the real gate.
-# srcml records each filename exactly as it received it, so invoking it as
-# `srcml -r project-src` from the parent directory stamps the scratch checkout
-# directory into every path in the published corpus. Parsing `.` from inside the
-# tree keeps filenames repository-relative instead. Only srcml's directory
-# changes — the subshell leaves zstd and the log writing in the workspace.
+# srcml records each filename exactly as it received it, and has no option to
+# rewrite or relativize them. That makes how it is invoked the only lever:
+#
+#   srcml -r project-src   ->  project-src/v2rayN/Program.cs   (scratch dir leaks)
+#   srcml -r .             ->  /home/runner/work/.../Program.cs (canonicalized!)
+#   srcml -r v2rayN ...    ->  v2rayN/Program.cs                (what we want)
+#
+# A named relative path is preserved verbatim, but `.` gets canonicalized to an
+# absolute path — so the entries are named explicitly from inside the checkout.
+# Only srcml's directory changes; the subshell leaves zstd and the log in the
+# workspace.
 set +e
-# shellcheck disable=SC2086
-( cd "$INPUT_DIR" && "$SRCML_BIN" $SRCML_FLAGS . ) \
+(
+    cd "$INPUT_DIR" || exit 1
+    shopt -s nullglob
+    entries=(*)
+    if [ ${#entries[@]} -eq 0 ]; then
+        echo "ERROR: no top-level entries in $INPUT_DIR" >&2
+        exit 1
+    fi
+    # shellcheck disable=SC2086
+    "$SRCML_BIN" $SRCML_FLAGS "${entries[@]}"
+) \
     2> >(tee -a "$LOG_FILE" >&2) \
     | zstd "-${ZSTD_LEVEL}" --long=27 -T0 --force -o "$OUTPUT_ZST"
 pipe_status=("${PIPESTATUS[@]}")

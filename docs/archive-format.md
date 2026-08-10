@@ -60,10 +60,19 @@ filter if they would rather not.
 
 ## What is and is not in an archive
 
-**Filenames are repository-relative.** `srcml` records each path exactly as it was given, so it
-is invoked from *inside* the checkout (`cd project-src && srcml -r .`) rather than from the
-parent. Parsing `project-src/…` from outside would stamp the scratch checkout directory into
-every filename in the corpus.
+**Filenames are repository-relative.** `srcml` records each path exactly as it was given and
+offers no option to rewrite them, so the invocation is the only lever. It is run from *inside*
+the checkout against explicitly named top-level entries:
+
+| invocation | recorded filename |
+| --- | --- |
+| `srcml -r project-src` | `project-src/v2rayN/Program.cs` — scratch directory leaks in |
+| `srcml -r .` | `/home/runner/work/…/project-src/v2rayN/Program.cs` — canonicalized to absolute |
+| `cd project-src && srcml -r v2rayN …` | `v2rayN/Program.cs` |
+
+A *named* relative path is preserved verbatim, but `.` is canonicalized to an absolute path,
+which would bake the runner's working directory into every path in the corpus. Hence the
+explicit entry list.
 
 **Files under dot-directories are absent.** `srcml`'s recursive traversal skips hidden
 directories, so `.github/`, `.config/`, and similar are not parsed. This is verified rather
