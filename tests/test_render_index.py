@@ -134,6 +134,44 @@ class TestJobNames(unittest.TestCase):
         )
 
 
+class TestClassify(unittest.TestCase):
+    """A job killed by timeout-minutes is reported by GitHub as "cancelled"."""
+
+    def job(self, conclusion, minutes=None):
+        j = {"conclusion": conclusion}
+        if minutes is not None:
+            j["started_at"] = "2026-08-10T05:57:30Z"
+            end = 5 * 3600 + 57 * 60 + 30 + int(minutes * 60)
+            j["completed_at"] = (
+                f"2026-08-10T{end // 3600:02d}:{end % 3600 // 60:02d}:{end % 60:02d}Z"
+            )
+        return j
+
+    def test_cancelled_at_the_timeout_is_a_timeout(self):
+        # The real case: iluwatar/java-design-patterns burned the full 120
+        # minutes on a hung srcml and came back as "cancelled".
+        self.assertEqual("timed_out", render_index.classify(self.job("cancelled", 120.25), 120))
+
+    def test_cancelled_just_under_the_timeout_still_counts(self):
+        # Within TIMEOUT_TOLERANCE_SECONDS of the boundary.
+        self.assertEqual("timed_out", render_index.classify(self.job("cancelled", 119.5), 120))
+
+    def test_cancelled_early_is_a_real_cancellation(self):
+        self.assertEqual("cancelled", render_index.classify(self.job("cancelled", 3), 120))
+
+    def test_cancelled_without_timing_is_left_alone(self):
+        # A queued job that never started has no duration to judge by.
+        self.assertEqual("cancelled", render_index.classify(self.job("cancelled"), 120))
+
+    def test_other_conclusions_pass_through(self):
+        for concl in ("success", "failure", "timed_out", None):
+            self.assertEqual(concl, render_index.classify(self.job(concl, 120.5), 120))
+
+    def test_a_timed_out_job_strikes_and_reports_failed(self):
+        # End to end: the normalization has to land in both sets.
+        self.assertIn("timed_out", render_index.STRIKE_CONCLUSIONS)
+
+
 class TestCollectJobAttempts(unittest.TestCase):
     def test_every_sighting_is_kept_newest_first(self):
         job = render_index.job_name("c", "own/repo1", "v1.0", "1.1.0")
@@ -142,7 +180,7 @@ class TestCollectJobAttempts(unittest.TestCase):
             run(7, [{"name": job, "conclusion": "failure"}]),
             run(5, [{"name": job, "conclusion": "success"}]),
         ])
-        attempts, oldest = render_index.collect_job_attempts(gh, "o/r")
+        attempts, oldest = render_index.collect_job_attempts(gh, "o/r", 120)
         self.assertEqual([9, 7, 5], [a["run_id"] for a in attempts[job]])
         self.assertEqual(5, oldest)
 
@@ -153,11 +191,11 @@ class TestCollectJobAttempts(unittest.TestCase):
             {"name": job, "conclusion": "failure"},
             {"name": "report", "conclusion": "success"},
         ])])
-        attempts, _ = render_index.collect_job_attempts(gh, "o/r")
+        attempts, _ = render_index.collect_job_attempts(gh, "o/r", 120)
         self.assertEqual([job], list(attempts))
 
     def test_no_runs_is_not_fatal(self):
-        attempts, oldest = render_index.collect_job_attempts(FakeGitHub(runs=[]), "o/r")
+        attempts, oldest = render_index.collect_job_attempts(FakeGitHub(runs=[]), "o/r", 120)
         self.assertEqual({}, attempts)
         self.assertEqual(0, oldest)
 

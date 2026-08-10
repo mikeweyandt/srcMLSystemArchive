@@ -15,6 +15,7 @@ import argparse
 import json
 import os
 import sys
+from datetime import datetime
 from pathlib import Path
 
 from archive_common import (
@@ -55,6 +56,16 @@ MAX_JOB_PAGES = 3
 # system: it says a human or a newer run intervened.
 STRIKE_CONCLUSIONS = frozenset({"failure", "timed_out"})
 
+# ...except that GitHub does not distinguish those two cases in `conclusion`.
+# A job killed by `timeout-minutes` is reported as "cancelled", exactly like one
+# a human stopped, so a hung srcml would silently never strike and would burn
+# the full timeout every night forever. The one signal that separates them is
+# how long the job ran: a job cancelled at (essentially) the timeout was killed
+# by it, and nothing else plausibly stops within a minute of that boundary.
+# Such attempts are normalized to "timed_out" at collection time, so everything
+# downstream sees an ordinary failure.
+TIMEOUT_TOLERANCE_SECONDS = 60
+
 # Only the nightly schedule is the retry loop that quarantine governs.
 # workflow_dispatch inputs are not readable back from the REST API, so a
 # dry run cannot be told apart from a real one at this layer. Counting manual
@@ -89,7 +100,41 @@ def legacy_job_name(language: str, system: str, version: str) -> str:
     return f"{language}{JOB_SEP}{system}{JOB_SEP}{version}"
 
 
-def collect_job_attempts(gh: GitHub, repo: str) -> tuple[dict[str, list[dict]], int]:
+def job_seconds(job: dict) -> float | None:
+    """How long a job ran, or None if the API did not report both ends."""
+    started, completed = job.get("started_at"), job.get("completed_at")
+    if not started or not completed:
+        return None
+    try:
+        return (
+            datetime.fromisoformat(completed.replace("Z", "+00:00"))
+            - datetime.fromisoformat(started.replace("Z", "+00:00"))
+        ).total_seconds()
+    except ValueError:
+        return None
+
+
+def classify(job: dict, timeout_minutes: int) -> str | None:
+    """The job's conclusion, with a timeout-kill recovered from "cancelled".
+
+    See TIMEOUT_TOLERANCE_SECONDS: GitHub reports a job killed by
+    `timeout-minutes` as "cancelled", indistinguishable by conclusion from one
+    a human stopped. Duration is what separates them.
+    """
+    conclusion = job.get("conclusion")
+    if conclusion != "cancelled":
+        return conclusion
+    ran = job_seconds(job)
+    if ran is None:
+        return conclusion
+    if ran >= timeout_minutes * 60 - TIMEOUT_TOLERANCE_SECONDS:
+        return "timed_out"
+    return conclusion
+
+
+def collect_job_attempts(
+    gh: GitHub, repo: str, timeout_minutes: int
+) -> tuple[dict[str, list[dict]], int]:
     """Map build-job name -> every attempt in the scan window, newest first.
 
     Also returns the id of the oldest run scanned, which is what lets
@@ -135,7 +180,7 @@ def collect_job_attempts(gh: GitHub, repo: str) -> tuple[dict[str, list[dict]], 
                 continue
             attempts.setdefault(name, []).append(
                 {
-                    "conclusion": job.get("conclusion"),
+                    "conclusion": classify(job, timeout_minutes),
                     "event": run.get("event", ""),
                     "run_id": int(run["id"]),
                     "run_url": run.get("html_url", ""),
@@ -506,7 +551,9 @@ def main() -> int:
 
     gh = GitHub(token=args.token)
     releases = collect_releases(gh, args.repo)
-    attempts, oldest_run_id = collect_job_attempts(gh, args.repo)
+    attempts, oldest_run_id = collect_job_attempts(
+        gh, args.repo, policy["build"]["timeout_minutes"]
+    )
     targets = iter_targets(policy)
 
     failures = apply_strikes(

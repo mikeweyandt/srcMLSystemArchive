@@ -1,5 +1,28 @@
 {
- "failures": {},
+ "failures": {
+  "archive-c-torvalds-linux-v7.1-srcml-1.1.0": {
+   "count": 3,
+   "first_failed_at": "2026-08-10T03:53:44Z",
+   "language": "c",
+   "last_failed_at": "2026-08-10T05:36:59Z",
+   "last_run_id": 31359157773,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31359157773",
+   "srcml_version": "1.1.0",
+   "system": "torvalds/linux",
+   "version": "v7.1"
+  },
+  "archive-java-iluwatar-java-design-patterns-1.25.0-srcml-1.1.0": {
+   "count": 3,
+   "first_failed_at": "2026-08-10T05:36:59Z",
+   "language": "java",
+   "last_failed_at": "2026-08-10T05:36:59Z",
+   "last_run_id": 31359157773,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31359157773",
+   "srcml_version": "1.1.0",
+   "system": "iluwatar/java-design-patterns",
+   "version": "1.25.0"
+  }
+ },
  "generated_by": "scripts/render_index.py (do not hand-edit). To retry a quarantined system, run the Reconcile archives workflow with retry_failed: true.",
  "schema": 1
 }
