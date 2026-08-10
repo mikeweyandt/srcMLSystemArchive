@@ -4,9 +4,10 @@
 
 **3** of **5** archives published, 44.1 MB total.
 
-⚠️ **1 system(s) currently failing to build.** Archives are published only when they are well-formed XML, so a failure here usually means `srcml` could not produce a valid archive for that source.
+⚠️ **2 system(s) currently failing to build.** Archives are published only when they are well-formed XML, so a failure here means `srcml` either could not produce a valid archive for that source or hung trying. After 3 consecutive failures a system stops being retried; run the **Reconcile archives** workflow with `retry_failed: true` to attempt one again.
 
-- `c` **torvalds/linux** `v7.1` (srcml 1.1.0) — [build log](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31359157773)
+- `c` **torvalds/linux** `v7.1` (srcml 1.1.0) — 3 failed attempts, no longer retried — [build log](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31359157773)
+- `java` **iluwatar/java-design-patterns** `1.25.0` (srcml 1.1.0) — 3 failed attempts, no longer retried — [build log](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31359157773)
 
 ## C
 
@@ -14,7 +15,7 @@
 
 | language | system | version | srcml version | size | archive |
 |---|---|---|---|---|---|
-| C | [`torvalds/linux`](https://github.com/torvalds/linux) | `v7.1` <sup>tag</sup> | `1.1.0` | — | [❌ failed](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31359157773) |
+| C | [`torvalds/linux`](https://github.com/torvalds/linux) | `v7.1` <sup>tag</sup> | `1.1.0` | — | [⛔ failed (not retried)](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31359157773) |
 
 ## C++
 
@@ -34,11 +35,11 @@
 
 ## Java
 
-0/1 published.
+0/1 published. **1 failing.**
 
 | language | system | version | srcml version | size | archive |
 |---|---|---|---|---|---|
-| Java | [`iluwatar/java-design-patterns`](https://github.com/iluwatar/java-design-patterns) | `1.25.0` <sup>tag</sup> | `1.1.0` | — | [⏹ cancelled](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31359157773) |
+| Java | [`iluwatar/java-design-patterns`](https://github.com/iluwatar/java-design-patterns) | `1.25.0` <sup>tag</sup> | `1.1.0` | — | [⛔ failed (not retried)](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31359157773) |
 
 ## Python
 
