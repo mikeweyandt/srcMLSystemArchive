@@ -54,9 +54,14 @@ log "disk before:   $(df -h --output=avail . | tail -1 | tr -d ' ') available"
 # srcml's exit status is captured rather than asserted: across a 500-repo corpus
 # some inputs will make it complain, and an archive that still decompresses and
 # parses is worth keeping. The integrity check below is the real gate.
+# srcml records each filename exactly as it received it, so invoking it as
+# `srcml -r project-src` from the parent directory stamps the scratch checkout
+# directory into every path in the published corpus. Parsing `.` from inside the
+# tree keeps filenames repository-relative instead. Only srcml's directory
+# changes — the subshell leaves zstd and the log writing in the workspace.
 set +e
 # shellcheck disable=SC2086
-"$SRCML_BIN" $SRCML_FLAGS "$INPUT_DIR" \
+( cd "$INPUT_DIR" && "$SRCML_BIN" $SRCML_FLAGS . ) \
     2> >(tee -a "$LOG_FILE" >&2) \
     | zstd "-${ZSTD_LEVEL}" --long=27 -T0 --force -o "$OUTPUT_ZST"
 pipe_status=("${PIPESTATUS[@]}")

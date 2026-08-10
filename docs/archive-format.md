@@ -58,6 +58,25 @@ what was checked out.
 srcml complain, and an archive that still validates is worth keeping; the field lets consumers
 filter if they would rather not.
 
+## What is and is not in an archive
+
+**Filenames are repository-relative.** `srcml` records each path exactly as it was given, so it
+is invoked from *inside* the checkout (`cd project-src && srcml -r .`) rather than from the
+parent. Parsing `project-src/…` from outside would stamp the scratch checkout directory into
+every filename in the corpus.
+
+**Files under dot-directories are absent.** `srcml`'s recursive traversal skips hidden
+directories, so `.github/`, `.config/`, and similar are not parsed. This is verified rather
+than assumed: `2dust/v2rayN` at `7.24.4` has 274 `.cs` files, of which exactly one lives under
+`.github/`, and the archive contains the other 273 — nothing missing, nothing extra.
+
+For a corpus this is usually the behaviour you want, since CI helper scripts are not really
+part of the system. But it does mean a unit count will not match a naive
+`find . -name '*.cs' | wc -l`. Compare against non-hidden paths only.
+
+**Only languages srcml recognizes are parsed.** Files it has no parser for are skipped
+silently, so an archive's unit count reflects parseable source, not repository file count.
+
 `units_by_language` matters because archives are **not** restricted to the classifying language.
 `srcml` runs over the whole tree with extension-based detection, so the C archive of the kernel
 also contains its C++ and assembly-adjacent units. The language in the release title is a
