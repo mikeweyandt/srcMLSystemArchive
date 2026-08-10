@@ -82,8 +82,10 @@ runs:
       shell: bash
       run: |
         sudo apt-get update
-        # libxml2-utils provides xmllint, which gates archive well-formedness.
-        sudo apt-get install -y zstd git curl ca-certificates jq libxml2-utils
+        # Validation is done by scripts/archive_stats.py (stdlib expat), not
+        # xmllint — see that script's docstring for why a namespace-aware
+        # parser is the wrong tool for srcML archives.
+        sudo apt-get install -y zstd git curl ca-certificates jq
 
     - name: Install pinned srcml
       shell: bash

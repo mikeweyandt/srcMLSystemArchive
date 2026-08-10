@@ -12,7 +12,10 @@
    "license": "NOASSERTION",
    "srcml_version": "1.1.0",
    "tag": "archive-c-torvalds-linux-v7.1-srcml-1.1.0",
-   "published": false
+   "status": "failed",
+   "published": false,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31354212164",
+   "last_attempt_at": "2026-08-10T04:00:58Z"
   },
   {
    "language": "cpp",
@@ -25,7 +28,10 @@
    "license": "Apache-2.0",
    "srcml_version": "1.1.0",
    "tag": "archive-cpp-tensorflow-tensorflow-v2.21.0-srcml-1.1.0",
-   "published": false
+   "status": "pending",
+   "published": false,
+   "last_run_url": "",
+   "last_attempt_at": ""
   },
   {
    "language": "csharp",
@@ -38,7 +44,10 @@
    "license": "GPL-3.0",
    "srcml_version": "1.1.0",
    "tag": "archive-csharp-2dust-v2rayN-7.24.4-srcml-1.1.0",
-   "published": false
+   "status": "pending",
+   "published": false,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31356969484",
+   "last_attempt_at": "2026-08-10T04:54:53Z"
   },
   {
    "language": "java",
@@ -51,7 +60,10 @@
    "license": "NOASSERTION",
    "srcml_version": "1.1.0",
    "tag": "archive-java-iluwatar-java-design-patterns-1.25.0-srcml-1.1.0",
-   "published": false
+   "status": "pending",
+   "published": false,
+   "last_run_url": "",
+   "last_attempt_at": ""
   },
   {
    "language": "python",
@@ -64,7 +76,10 @@
    "license": "MIT",
    "srcml_version": "1.1.0",
    "tag": "archive-python-NousResearch-hermes-agent-v2026.8.3-srcml-1.1.0",
-   "published": false
+   "status": "pending",
+   "published": false,
+   "last_run_url": "",
+   "last_attempt_at": ""
   }
  ]
 }

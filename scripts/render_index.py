@@ -29,6 +29,41 @@ from archive_common import (
 
 MAX_RELEASE_PAGES = 100
 
+# The reconcile workflow names each build job "<language> · <system> · <version>",
+# which is exactly the identity of a row here. That makes the Actions history a
+# usable status source with no extra bookkeeping: a system whose last build
+# attempt failed is reported as failed rather than being indistinguishable from
+# one that has simply not been built yet.
+RECONCILE_WORKFLOW = "Reconcile archives"
+JOB_SEP = " · "
+MAX_RUNS_SCANNED = 20
+
+
+def job_name(language: str, system: str, version: str) -> str:
+    return f"{language}{JOB_SEP}{system}{JOB_SEP}{version}"
+
+
+def collect_job_outcomes(gh: GitHub, repo: str) -> dict[str, dict]:
+    """Map build-job name -> outcome of its most recent attempt."""
+    outcomes: dict[str, dict] = {}
+    runs = gh.get(f"/repos/{repo}/actions/runs", {"per_page": 100}) or {}
+    reconciles = [
+        r for r in runs.get("workflow_runs", []) if r.get("name") == RECONCILE_WORKFLOW
+    ][:MAX_RUNS_SCANNED]
+    # Newest first, and the first sighting of a job name wins.
+    for run in reconciles:
+        jobs = gh.get(f"/repos/{repo}/actions/runs/{run['id']}/jobs", {"per_page": 100})
+        for job in (jobs or {}).get("jobs", []):
+            name = job.get("name", "")
+            if JOB_SEP not in name or name in outcomes:
+                continue
+            outcomes[name] = {
+                "conclusion": job.get("conclusion"),
+                "run_url": run.get("html_url", ""),
+                "attempted_at": run.get("created_at", ""),
+            }
+    return outcomes
+
 
 def human_bytes(n: int) -> str:
     if not n:
@@ -59,7 +94,9 @@ def collect_releases(gh: GitHub, repo: str) -> dict[str, dict]:
     return found
 
 
-def build_rows(policy: dict, releases: dict[str, dict]) -> list[dict]:
+def build_rows(
+    policy: dict, releases: dict[str, dict], outcomes: dict[str, dict]
+) -> list[dict]:
     rows = []
     for language in policy["targets"]["languages"]:
         path = lockfile_path(language)
@@ -70,6 +107,19 @@ def build_rows(policy: dict, releases: dict[str, dict]) -> list[dict]:
             for srcml_version in policy["srcml"]["versions"]:
                 tag = release_tag(language, sysrec.name, sysrec.version, srcml_version)
                 rel = releases.get(tag)
+                outcome = outcomes.get(job_name(language, sysrec.name, sysrec.version), {})
+
+                # A published release is the ground truth; the Actions history
+                # only explains what happened to the ones that are not there.
+                if rel:
+                    status = "published"
+                elif outcome.get("conclusion") == "failure":
+                    status = "failed"
+                elif outcome.get("conclusion") in ("cancelled", "timed_out"):
+                    status = outcome["conclusion"]
+                else:
+                    status = "pending"
+
                 rows.append(
                     {
                         "language": language,
@@ -82,15 +132,28 @@ def build_rows(policy: dict, releases: dict[str, dict]) -> list[dict]:
                         "license": sysrec.license,
                         "srcml_version": srcml_version,
                         "tag": tag,
+                        "status": status,
                         "published": bool(rel),
+                        "last_run_url": outcome.get("run_url", ""),
+                        "last_attempt_at": outcome.get("attempted_at", ""),
                         **(rel or {}),
                     }
                 )
     return rows
 
 
+STATUS_LABEL = {
+    "published": "",
+    "failed": "❌ failed",
+    "cancelled": "⏹ cancelled",
+    "timed_out": "⏱ timed out",
+    "pending": "_pending_",
+}
+
+
 def render_markdown(rows: list[dict], repo: str) -> str:
     published = [r for r in rows if r["published"]]
+    failed = [r for r in rows if r["status"] == "failed"]
     total_bytes = sum(r.get("bytes_compressed", 0) for r in published)
 
     out = [
@@ -103,16 +166,35 @@ def render_markdown(rows: list[dict], repo: str) -> str:
         "",
     ]
 
+    if failed:
+        out += [
+            f"⚠️ **{len(failed)} system(s) currently failing to build.** Archives are "
+            "published only when they are well-formed XML, so a failure here usually "
+            "means `srcml` could not produce a valid archive for that source.",
+            "",
+        ]
+        for r in failed:
+            link = f" — [build log]({r['last_run_url']})" if r["last_run_url"] else ""
+            out.append(
+                f"- `{r['language']}` **{r['system']}** `{r['version']}` "
+                f"(srcml {r['srcml_version']}){link}"
+            )
+        out.append("")
+
     by_language: dict[str, list[dict]] = {}
     for row in rows:
         by_language.setdefault(row["language"], []).append(row)
 
     for language, group in by_language.items():
         done = sum(1 for r in group if r["published"])
+        bad = sum(1 for r in group if r["status"] == "failed")
+        heading = f"{done}/{len(group)} published."
+        if bad:
+            heading += f" **{bad} failing.**"
         out += [
             f"## {group[0]['language_display']}",
             "",
-            f"{done}/{len(group)} published.",
+            heading,
             "",
             "| language | system | version | srcml version | size | archive |",
             "|---|---|---|---|---|---|",
@@ -126,7 +208,13 @@ def render_markdown(rows: list[dict], repo: str) -> str:
                 size = human_bytes(r.get("bytes_compressed", 0))
                 link = f"[download]({r.get('download_url','')})"
             else:
-                size, link = "—", "_pending_"
+                size = "—"
+                label = STATUS_LABEL.get(r["status"], r["status"])
+                link = (
+                    f"[{label}]({r['last_run_url']})"
+                    if r["last_run_url"] and r["status"] != "pending"
+                    else label
+                )
             out.append(
                 f"| {r['language_display']} | {system_link} | {version} "
                 f"| `{r['srcml_version']}` | {size} | {link} |"
@@ -164,13 +252,19 @@ def main() -> int:
     policy = load_policy()
     gh = GitHub(token=args.token)
     releases = collect_releases(gh, args.repo)
-    rows = build_rows(policy, releases)
+    outcomes = collect_job_outcomes(gh, args.repo)
+    rows = build_rows(policy, releases, outcomes)
 
     args.out.write_text(render_markdown(rows, args.repo))
     args.json.write_text(json.dumps({"repo": args.repo, "archives": rows}, indent=1) + "\n")
 
     done = sum(1 for r in rows if r["published"])
-    print(f"wrote {args.out} and {args.json}: {done}/{len(rows)} published", file=sys.stderr)
+    bad = sum(1 for r in rows if r["status"] == "failed")
+    print(
+        f"wrote {args.out} and {args.json}: "
+        f"{done}/{len(rows)} published, {bad} failing",
+        file=sys.stderr,
+    )
     return 0
 
 

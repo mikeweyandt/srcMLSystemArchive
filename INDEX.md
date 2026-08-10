@@ -4,13 +4,17 @@
 
 **0** of **5** archives published, 0 B total.
 
+⚠️ **1 system(s) currently failing to build.** Archives are published only when they are well-formed XML, so a failure here usually means `srcml` could not produce a valid archive for that source.
+
+- `c` **torvalds/linux** `v7.1` (srcml 1.1.0) — [build log](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31354212164)
+
 ## C
 
-0/1 published.
+0/1 published. **1 failing.**
 
 | language | system | version | srcml version | size | archive |
 |---|---|---|---|---|---|
-| C | [`torvalds/linux`](https://github.com/torvalds/linux) | `v7.1` <sup>tag</sup> | `1.1.0` | — | _pending_ |
+| C | [`torvalds/linux`](https://github.com/torvalds/linux) | `v7.1` <sup>tag</sup> | `1.1.0` | — | [❌ failed](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31354212164) |
 
 ## C++
 

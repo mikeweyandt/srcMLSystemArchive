@@ -101,8 +101,19 @@ See [docs/archive-format.md](docs/archive-format.md).
 | Try a build without publishing | run either workflow with `dry_run: true` |
 | Run the tests | `python3 -m unittest discover -s tests -t .` |
 
-Everything is stdlib-only Python plus `bash`, `git`, `zstd`, `jq`, and `xmllint`. There is
-nothing to `pip install`.
+Everything is stdlib-only Python plus `bash`, `git`, `zstd`, and `jq`. There is nothing to
+`pip install`.
+
+### Failing systems
+
+Archives are published only when they are well-formed XML. A system srcml cannot render
+validly stays in the lockfiles and is reported as **failing** in [INDEX.md](INDEX.md) with a
+link to its build log, rather than being blocklisted or published broken.
+
+`torvalds/linux` currently fails this way: srcml 1.1.0 leaves an `<attribute>` element unclosed
+when a GNU `__attribute__` spans a `#ifdef`/`#endif`. It is a srcml defect rather than a
+pipeline one — srcMLLargeSystems' own published kernel baseline has it too. See
+[docs/archive-format.md](docs/archive-format.md#known-srcml-defect).
 
 ### Rate limits
 

@@ -60,13 +60,84 @@ class TestArchiveStats(unittest.TestCase):
         self.assertEqual(dict(Counter(langs)), stats["units_by_language"])
         self.assertEqual(len(payload), stats["bytes_raw"])
 
+    def test_accepts_srcml_undeclared_cpp_prefix(self):
+        # REGRESSION GUARD. srcML declares `xmlns:cpp` on individual units that
+        # need it, not on the archive root, and misses cases — srcML's own
+        # published baselines contain `<cpp:ifdef>` under a prefix that was never
+        # declared. A namespace-aware parser rejects them: srcMLLargeSystems'
+        # Linux baseline fails `xmllint --stream` at line 32,599,292.
+        #
+        # Validation must therefore be namespace-agnostic. If this test starts
+        # failing, someone has reintroduced namespace-aware validation and every
+        # C archive in the corpus will fail to build.
+        payload = (
+            b'<?xml version="1.0" encoding="UTF-8"?>\n'
+            b'<unit xmlns="http://www.srcML.org/srcML/src" revision="1.1.0">\n'
+            b'<unit revision="1.1.0" language="C" filename="a.c">'
+            b"<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive> "
+            b"<name>__GNUC__</name></cpp:ifdef>"
+            b"</unit>\n</unit>\n"
+        )
+        proc = run(payload)
+        self.assertEqual(0, proc.returncode, proc.stderr.decode())
+        self.assertEqual({"C": 1}, json.loads(proc.stdout)["units_by_language"])
+
+    def test_rejects_truncated_archive(self):
+        # The real failure mode: srcml crashes partway and the root never closes.
+        # It still opens with an XML declaration and still contains whole units,
+        # so only a parse that reaches end-of-input detects it.
+        payload = (
+            b'<?xml version="1.0" encoding="UTF-8"?>\n'
+            b'<unit xmlns="http://www.srcML.org/srcML/src" revision="1.1.0">\n'
+            b'<unit revision="1.1.0" language="C" filename="a.c">x</unit>\n'
+        )
+        proc = run(payload)
+        self.assertEqual(1, proc.returncode)
+        self.assertIn(b"truncated", proc.stderr)
+
+    def test_rejects_mismatched_tags(self):
+        payload = b'<?xml version="1.0"?>\n<unit><a></b></unit>\n'
+        self.assertEqual(1, run(payload).returncode)
+
+    def test_skip_validation_still_reports_stats(self):
+        truncated = (
+            b'<?xml version="1.0"?>\n<unit>\n'
+            b'<unit revision="1.1.0" language="C" filename="a.c">x</unit>\n'
+        )
+        proc = subprocess.run(
+            [sys.executable, str(STATS), "--skip-validation"],
+            input=truncated,
+            capture_output=True,
+        )
+        self.assertEqual(0, proc.returncode, proc.stderr.decode())
+        self.assertEqual(1, json.loads(proc.stdout)["units"])
+
     def test_rejects_empty_stream(self):
         self.assertEqual(1, run(b"").returncode)
 
     def test_rejects_non_xml(self):
+        # Caught by the parser before the XML-declaration check ever runs.
         proc = run(b"Segmentation fault\n")
         self.assertEqual(1, proc.returncode)
-        self.assertIn(b"XML declaration", proc.stderr)
+        self.assertIn(b"malformed XML", proc.stderr)
+
+    def test_rejects_unclosed_element_mid_document(self):
+        # The real-world case: srcml 1.1.0 leaves `<attribute>` unclosed when a
+        # GNU __attribute__ spans a preprocessor conditional, so the archive is
+        # structurally broken even though srcml exits 0 and the stream is
+        # complete. Rejecting it is intentional — the corpus holds valid XML.
+        payload = (
+            b'<?xml version="1.0" encoding="UTF-8"?>\n'
+            b'<unit xmlns="http://www.srcML.org/srcML/src" revision="1.1.0">\n'
+            b'<unit revision="1.1.0" language="C" filename="pkey-helpers.h">'
+            b"<cpp:ifdef>#<cpp:directive>ifdef</cpp:directive></cpp:ifdef>\n"
+            b"<attribute>__attribute__((<name>format</name>\n"
+            b"<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>\n"
+            b"</unit>\n</unit>\n"
+        )
+        proc = run(payload)
+        self.assertEqual(1, proc.returncode)
+        self.assertIn(b"malformed XML", proc.stderr)
 
     def test_archive_with_no_units_reports_zero(self):
         # Not an error here — generate_archive.sh is what treats zero units as

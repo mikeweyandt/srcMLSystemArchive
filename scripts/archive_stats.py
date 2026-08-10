@@ -1,14 +1,21 @@
 #!/usr/bin/env python3
-"""Single-pass statistics over a srcML archive streamed on stdin.
+"""Single-pass validation and statistics over a srcML archive streamed on stdin.
 
-Reads the decompressed XML once and reports uncompressed size, unit count, and
-a per-language unit breakdown. One pass matters: these archives reach several
-GB uncompressed for systems like the kernel, so re-reading the stream per
-statistic is the difference between seconds and minutes.
+Reads the decompressed XML once and reports uncompressed size, unit count, and a
+per-language unit breakdown, while checking well-formedness as it goes. One pass
+matters: these archives reach several GB uncompressed for systems like the
+kernel, so re-reading the stream per check is the difference between seconds and
+minutes.
 
-Because it consumes the decompressed stream anyway, this doubles as an
-integrity check — `zstd -dc archive.xml.zst | archive_stats.py` fails loudly if
-the archive does not decompress or does not look like a srcML archive.
+Well-formedness uses expat with **namespace processing off**, which is a
+deliberate choice rather than an oversight. srcML declares `xmlns:cpp` on
+individual units that need it rather than on the archive root, and misses cases:
+srcML's own published baselines contain `<cpp:ifdef>` under a prefix that was
+never declared. A namespace-aware parser therefore rejects known-good srcML
+output — verified against srcMLLargeSystems' Linux baseline, which fails
+`xmllint --stream` at line 32,599,292. Structural well-formedness is what
+actually matters here: it catches the failure that occurs in practice, a srcml
+crash leaving the archive truncated mid-stream.
 
 Usage:
     zstd -dc archive.xml.zst | archive_stats.py --out stats.json
@@ -21,6 +28,7 @@ import json
 import re
 import sys
 from collections import Counter
+from xml.parsers import expat
 
 CHUNK = 8 << 20  # 8 MiB
 
@@ -37,7 +45,16 @@ OVERLAP = 16384
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--out", help="write JSON here (default: stdout)")
+    ap.add_argument(
+        "--skip-validation",
+        action="store_true",
+        help="collect stats without checking well-formedness",
+    )
     args = ap.parse_args()
+
+    # No namespace_separator: element names stay opaque strings, so srcML's
+    # undeclared `cpp:` prefix is not an error. See the module docstring.
+    parser = None if args.skip_validation else expat.ParserCreate()
 
     total_bytes = 0
     languages: Counter[str] = Counter()
@@ -61,6 +78,13 @@ def main() -> int:
         if not head:
             head = chunk[:256]
 
+        if parser is not None:
+            try:
+                parser.Parse(chunk, False)
+            except expat.ExpatError as exc:
+                print(f"archive_stats: malformed XML: {exc}", file=sys.stderr)
+                return 1
+
         buf += chunk
         for m in UNIT_RE.finditer(buf):
             abs_start = base + m.start()
@@ -83,6 +107,18 @@ def main() -> int:
             file=sys.stderr,
         )
         return 1
+
+    # Finalizing is what catches truncation: a srcml crash mid-stream leaves the
+    # root element unclosed, which is only detectable at end of input.
+    if parser is not None:
+        try:
+            parser.Parse(b"", True)
+        except expat.ExpatError as exc:
+            print(
+                f"archive_stats: archive is truncated or unclosed: {exc}",
+                file=sys.stderr,
+            )
+            return 1
 
     stats = {
         "bytes_raw": total_bytes,

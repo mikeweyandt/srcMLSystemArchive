@@ -103,25 +103,22 @@ sha=$(sha256sum "$OUTPUT_ZST" | awk '{print $1}')
 log "compressed:    $zst_bytes bytes"
 log "sha256:        $sha"
 
-# Well-formedness gate. This is what catches a srcml crash mid-stream: the
-# archive is left truncated, so it still opens with an XML declaration and still
-# contains units, but its root element never closes. Only a real parse detects
-# that. --stream keeps libxml2 in SAX mode, so memory stays flat no matter how
-# many GB the archive runs to.
-if [ "${SKIP_XML_VALIDATION:-0}" != "1" ]; then
-    log "validating XML well-formedness..."
-    if ! zstd -dc "$OUTPUT_ZST" | xmllint --stream --noout - 2> >(tee -a "$LOG_FILE" >&2); then
-        log "ERROR: archive is not well-formed XML (srcml exited $srcml_exit — likely truncated)"
-        exit 1
-    fi
+# One streaming pass validates well-formedness and collects stats. This is what
+# catches a srcml crash mid-stream: the archive is left truncated, so it still
+# opens with an XML declaration and still contains units, but its root element
+# never closes — only a real parse finds that.
+#
+# Note this is NOT `xmllint`. srcML declares `xmlns:cpp` per-unit and misses
+# cases, so any namespace-aware parser rejects srcML's own published baselines;
+# srcMLLargeSystems' Linux baseline fails `xmllint --stream` at line 32,599,292.
+# archive_stats.py parses with namespace processing off, which still catches
+# truncation and malformed markup. See its docstring.
+log "validating and collecting stats..."
+if ! zstd -dc "$OUTPUT_ZST" | python3 "$SCRIPT_DIR/archive_stats.py" --out "$STATS_JSON" \
+        2> >(tee -a "$LOG_FILE" >&2); then
+    log "ERROR: archive failed validation (srcml exited $srcml_exit — likely truncated)"
+    exit 1
 fi
-
-# Second streaming pass for uncompressed size and the per-language unit
-# breakdown. Kept separate from validation because zstd decompresses at roughly
-# a GB/s, making two clean passes cheaper than one entangled one.
-log "collecting stats..."
-zstd -dc "$OUTPUT_ZST" | python3 "$SCRIPT_DIR/archive_stats.py" --out "$STATS_JSON" \
-    2> >(tee -a "$LOG_FILE" >&2)
 
 raw_bytes=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["bytes_raw"])' "$STATS_JSON")
 units=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["units"])' "$STATS_JSON")
