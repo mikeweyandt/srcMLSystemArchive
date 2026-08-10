@@ -4,14 +4,17 @@
 
 **16** of **25** archives published, 68.5 MB total.
 
-⚠️ **6 system(s) currently failing to build.** Archives are published only when they are well-formed XML, so a failure here means `srcml` either could not produce a valid archive for that source or hung trying. After 3 consecutive failures a system stops being retried; run the **Reconcile archives** workflow with `retry_failed: true` to attempt one again.
+⚠️ **9 system(s) currently failing to build.** Archives are published only when they are well-formed XML, so a failure here means `srcml` either could not produce a valid archive for that source or hung trying. After 3 consecutive failures a system stops being retried; run the **Reconcile archives** workflow with `retry_failed: true` to attempt one again.
 
 - `c` **torvalds/linux** `v7.1` (srcml 1.1.0) — 3 failed attempts, no longer retried — [build log](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31359157773)
-- `c` **obsproject/obs-studio** `32.2.1` (srcml 1.1.0) — [build log](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31402789357)
-- `cpp` **ggml-org/llama.cpp** `b10342` (srcml 1.1.0) — [build log](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31402789357)
-- `cpp` **godotengine/godot** `4.7.1-stable` (srcml 1.1.0) — [build log](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31402789357)
+- `c` **obsproject/obs-studio** `32.2.1` (srcml 1.1.0) — 3 failed attempts, no longer retried — [build log](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31402789357)
+- `cpp` **ggml-org/llama.cpp** `b10342` (srcml 1.1.0) — 3 failed attempts, no longer retried — [build log](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31402789357)
+- `cpp` **godotengine/godot** `4.7.1-stable` (srcml 1.1.0) — 3 failed attempts, no longer retried — [build log](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31402789357)
 - `java` **iluwatar/java-design-patterns** `1.25.0` (srcml 1.1.0) — 3 failed attempts, no longer retried — [build log](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31359157773)
-- `java` **elastic/elasticsearch** `v9.5.0` (srcml 1.1.0) — [build log](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31402789357)
+- `java` **Stirling-Tools/Stirling-PDF** `v2.14.3` (srcml 1.1.0) — 3 failed attempts, no longer retried — [build log](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31402789357)
+- `java` **macrozheng/mall** `v1.0.3` (srcml 1.1.0) — 3 failed attempts, no longer retried — [build log](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31402789357)
+- `java` **spring-projects/spring-boot** `v4.1.0` (srcml 1.1.0) — 3 failed attempts, no longer retried — [build log](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31402789357)
+- `java` **elastic/elasticsearch** `v9.5.0` (srcml 1.1.0) — 3 failed attempts, no longer retried — [build log](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31402789357)
 
 ## C
 
@@ -23,7 +26,7 @@
 | C | [`microsoft/PowerToys`](https://github.com/microsoft/PowerToys) | `v0.100.2` | `1.1.0` | 3.5 MB | [download](https://github.com/mikeweyandt/srcMLSystemArchive/releases/download/archive-c-microsoft-PowerToys-v0.100.2-srcml-1.1.0/archive-c-microsoft-PowerToys-v0.100.2-srcml-1.1.0.xml.zst) |
 | C | [`ventoy/Ventoy`](https://github.com/ventoy/Ventoy) | `v1.1.17` | `1.1.0` | 1.5 MB | [download](https://github.com/mikeweyandt/srcMLSystemArchive/releases/download/archive-c-ventoy-Ventoy-v1.1.17-srcml-1.1.0/archive-c-ventoy-Ventoy-v1.1.17-srcml-1.1.0.xml.zst) |
 | C | [`redis/redis`](https://github.com/redis/redis) | `8.10.0` | `1.1.0` | 2.9 MB | [download](https://github.com/mikeweyandt/srcMLSystemArchive/releases/download/archive-c-redis-redis-8.10.0-srcml-1.1.0/archive-c-redis-redis-8.10.0-srcml-1.1.0.xml.zst) |
-| C | [`obsproject/obs-studio`](https://github.com/obsproject/obs-studio) | `32.2.1` | `1.1.0` | — | [❌ failed](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31402789357) |
+| C | [`obsproject/obs-studio`](https://github.com/obsproject/obs-studio) | `32.2.1` | `1.1.0` | — | [⛔ failed (not retried)](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31402789357) |
 
 ## C++
 
@@ -32,9 +35,9 @@
 | language | system | version | srcml version | size | archive |
 |---|---|---|---|---|---|
 | C++ | [`tensorflow/tensorflow`](https://github.com/tensorflow/tensorflow) | `v2.21.0` | `1.1.0` | 31.7 MB | [download](https://github.com/mikeweyandt/srcMLSystemArchive/releases/download/archive-cpp-tensorflow-tensorflow-v2.21.0-srcml-1.1.0/archive-cpp-tensorflow-tensorflow-v2.21.0-srcml-1.1.0.xml.zst) |
-| C++ | [`ggml-org/llama.cpp`](https://github.com/ggml-org/llama.cpp) | `b10342` | `1.1.0` | — | [❌ failed](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31402789357) |
+| C++ | [`ggml-org/llama.cpp`](https://github.com/ggml-org/llama.cpp) | `b10342` | `1.1.0` | — | [⛔ failed (not retried)](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31402789357) |
 | C++ | [`electron/electron`](https://github.com/electron/electron) | `v43.3.0` | `1.1.0` | 934.9 KB | [download](https://github.com/mikeweyandt/srcMLSystemArchive/releases/download/archive-cpp-electron-electron-v43.3.0-srcml-1.1.0/archive-cpp-electron-electron-v43.3.0-srcml-1.1.0.xml.zst) |
-| C++ | [`godotengine/godot`](https://github.com/godotengine/godot) | `4.7.1-stable` | `1.1.0` | — | [❌ failed](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31402789357) |
+| C++ | [`godotengine/godot`](https://github.com/godotengine/godot) | `4.7.1-stable` | `1.1.0` | — | [⛔ failed (not retried)](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31402789357) |
 | C++ | [`microsoft/terminal`](https://github.com/microsoft/terminal) | `v1.24.11911.0` | `1.1.0` | 2.1 MB | [download](https://github.com/mikeweyandt/srcMLSystemArchive/releases/download/archive-cpp-microsoft-terminal-v1.24.11911.0-srcml-1.1.0/archive-cpp-microsoft-terminal-v1.24.11911.0-srcml-1.1.0.xml.zst) |
 
 ## C#
@@ -51,15 +54,15 @@
 
 ## Java
 
-0/5 published. **2 failing.**
+0/5 published. **5 failing.**
 
 | language | system | version | srcml version | size | archive |
 |---|---|---|---|---|---|
 | Java | [`iluwatar/java-design-patterns`](https://github.com/iluwatar/java-design-patterns) | `1.25.0` <sup>tag</sup> | `1.1.0` | — | [⛔ failed (not retried)](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31359157773) |
-| Java | [`Stirling-Tools/Stirling-PDF`](https://github.com/Stirling-Tools/Stirling-PDF) | `v2.14.3` | `1.1.0` | — | [⏹ cancelled](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31402789357) |
-| Java | [`macrozheng/mall`](https://github.com/macrozheng/mall) | `v1.0.3` | `1.1.0` | — | [⏹ cancelled](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31402789357) |
-| Java | [`spring-projects/spring-boot`](https://github.com/spring-projects/spring-boot) | `v4.1.0` | `1.1.0` | — | [⏹ cancelled](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31402789357) |
-| Java | [`elastic/elasticsearch`](https://github.com/elastic/elasticsearch) | `v9.5.0` | `1.1.0` | — | [❌ failed](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31402789357) |
+| Java | [`Stirling-Tools/Stirling-PDF`](https://github.com/Stirling-Tools/Stirling-PDF) | `v2.14.3` | `1.1.0` | — | [⛔ failed (not retried)](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31402789357) |
+| Java | [`macrozheng/mall`](https://github.com/macrozheng/mall) | `v1.0.3` | `1.1.0` | — | [⛔ failed (not retried)](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31402789357) |
+| Java | [`spring-projects/spring-boot`](https://github.com/spring-projects/spring-boot) | `v4.1.0` | `1.1.0` | — | [⛔ failed (not retried)](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31402789357) |
+| Java | [`elastic/elasticsearch`](https://github.com/elastic/elasticsearch) | `v9.5.0` | `1.1.0` | — | [⛔ failed (not retried)](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31402789357) |
 
 ## Python
 
