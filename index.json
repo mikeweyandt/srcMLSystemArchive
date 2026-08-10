@@ -29,11 +29,15 @@
    "license": "MIT",
    "srcml_version": "1.1.0",
    "tag": "archive-c-microsoft-PowerToys-v0.100.2-srcml-1.1.0",
-   "status": "pending",
-   "published": false,
+   "status": "published",
+   "published": true,
    "strikes": 0,
-   "last_run_url": "",
-   "last_attempt_at": ""
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31399930099",
+   "last_attempt_at": "2026-08-10T14:45:56Z",
+   "url": "https://github.com/mikeweyandt/srcMLSystemArchive/releases/tag/archive-c-microsoft-PowerToys-v0.100.2-srcml-1.1.0",
+   "download_url": "https://github.com/mikeweyandt/srcMLSystemArchive/releases/download/archive-c-microsoft-PowerToys-v0.100.2-srcml-1.1.0/archive-c-microsoft-PowerToys-v0.100.2-srcml-1.1.0.xml.zst",
+   "bytes_compressed": 3719813,
+   "published_at": "2026-08-10T14:48:32Z"
   },
   {
    "language": "cpp",
@@ -67,11 +71,11 @@
    "license": "MIT",
    "srcml_version": "1.1.0",
    "tag": "archive-cpp-ggml-org-llama.cpp-b10342-srcml-1.1.0",
-   "status": "pending",
+   "status": "failed",
    "published": false,
    "strikes": 0,
-   "last_run_url": "",
-   "last_attempt_at": ""
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31399930099",
+   "last_attempt_at": "2026-08-10T14:45:56Z"
   },
   {
    "language": "csharp",
@@ -105,11 +109,15 @@
    "license": "GPL-2.0",
    "srcml_version": "1.1.0",
    "tag": "archive-csharp-jellyfin-jellyfin-v10.11.11-srcml-1.1.0",
-   "status": "pending",
-   "published": false,
+   "status": "published",
+   "published": true,
    "strikes": 0,
-   "last_run_url": "",
-   "last_attempt_at": ""
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31399930099",
+   "last_attempt_at": "2026-08-10T14:45:56Z",
+   "url": "https://github.com/mikeweyandt/srcMLSystemArchive/releases/tag/archive-csharp-jellyfin-jellyfin-v10.11.11-srcml-1.1.0",
+   "download_url": "https://github.com/mikeweyandt/srcMLSystemArchive/releases/download/archive-csharp-jellyfin-jellyfin-v10.11.11-srcml-1.1.0/archive-csharp-jellyfin-jellyfin-v10.11.11-srcml-1.1.0.xml.zst",
+   "bytes_compressed": 1183338,
+   "published_at": "2026-08-10T14:48:03Z"
   },
   {
    "language": "java",
@@ -142,8 +150,8 @@
    "status": "pending",
    "published": false,
    "strikes": 0,
-   "last_run_url": "",
-   "last_attempt_at": ""
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31399930099",
+   "last_attempt_at": "2026-08-10T14:45:56Z"
   },
   {
    "language": "python",
@@ -177,11 +185,15 @@
    "license": "MIT",
    "srcml_version": "1.1.0",
    "tag": "archive-python-TheAlgorithms-Python-master-f5988cc-srcml-1.1.0",
-   "status": "pending",
-   "published": false,
+   "status": "published",
+   "published": true,
    "strikes": 0,
-   "last_run_url": "",
-   "last_attempt_at": ""
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31399930099",
+   "last_attempt_at": "2026-08-10T14:45:56Z",
+   "url": "https://github.com/mikeweyandt/srcMLSystemArchive/releases/tag/archive-python-TheAlgorithms-Python-master-f5988cc-srcml-1.1.0",
+   "download_url": "https://github.com/mikeweyandt/srcMLSystemArchive/releases/download/archive-python-TheAlgorithms-Python-master-f5988cc-srcml-1.1.0/archive-python-TheAlgorithms-Python-master-f5988cc-srcml-1.1.0.xml.zst",
+   "bytes_compressed": 868407,
+   "published_at": "2026-08-10T14:47:44Z"
   }
  ]
 }
