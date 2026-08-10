@@ -13,3 +13,11 @@ version = "v2026.8.3"
 version_kind = "release"
 commit = "3c27eb6234bf91b8ceee9e9071591b31e9b148cb"
 license = "MIT"
+
+[[systems]]
+name = "TheAlgorithms/Python"
+repo = "https://github.com/TheAlgorithms/Python.git"
+version = "master-f5988cc"
+version_kind = "head"
+commit = "f5988cc09713315817df6a7e327e258013a94440"
+license = "MIT"

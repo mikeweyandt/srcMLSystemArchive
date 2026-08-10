@@ -13,3 +13,11 @@ version = "v2.21.0"
 version_kind = "release"
 commit = "a481b10260dfdf833a1b16007eead49c1d7febf3"
 license = "Apache-2.0"
+
+[[systems]]
+name = "ggml-org/llama.cpp"
+repo = "https://github.com/ggml-org/llama.cpp.git"
+version = "b10342"
+version_kind = "release"
+commit = "157b81fe6dbfec7d7ce91ef7cd9c6bc0c218d6fe"
+license = "MIT"
