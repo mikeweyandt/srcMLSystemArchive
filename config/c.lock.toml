@@ -13,3 +13,11 @@ version = "v7.1"
 version_kind = "tag"
 commit = "8cd9520d35a6c38db6567e97dd93b1f11f185dc6"
 license = "NOASSERTION"
+
+[[systems]]
+name = "microsoft/PowerToys"
+repo = "https://github.com/microsoft/PowerToys.git"
+version = "v0.100.2"
+version_kind = "release"
+commit = "1d11b732b7ba7dbb265d1151531655fd8d83c76d"
+license = "MIT"

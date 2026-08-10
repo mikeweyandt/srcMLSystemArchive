@@ -13,3 +13,11 @@ version = "1.25.0"
 version_kind = "tag"
 commit = "925755fa353de726f2a7eff087f9e62a3a34f66d"
 license = "NOASSERTION"
+
+[[systems]]
+name = "Stirling-Tools/Stirling-PDF"
+repo = "https://github.com/Stirling-Tools/Stirling-PDF.git"
+version = "v2.14.3"
+version_kind = "release"
+commit = "e556eba8326c8349aa0318034cfdb5c442dca21c"
+license = "NOASSERTION"

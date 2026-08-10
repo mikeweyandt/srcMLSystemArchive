@@ -13,3 +13,11 @@ version = "7.24.4"
 version_kind = "release"
 commit = "635a04d74c3cb6891e144756234d50e147cf175a"
 license = "GPL-3.0"
+
+[[systems]]
+name = "jellyfin/jellyfin"
+repo = "https://github.com/jellyfin/jellyfin.git"
+version = "v10.11.11"
+version_kind = "release"
+commit = "1fbd8739292cce610231be93daf43368733edf63"
+license = "GPL-2.0"
