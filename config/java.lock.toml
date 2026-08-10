@@ -21,3 +21,27 @@ version = "v2.14.3"
 version_kind = "release"
 commit = "e556eba8326c8349aa0318034cfdb5c442dca21c"
 license = "NOASSERTION"
+
+[[systems]]
+name = "macrozheng/mall"
+repo = "https://github.com/macrozheng/mall.git"
+version = "v1.0.3"
+version_kind = "release"
+commit = "dd617ac3fe89c8083af56bee3364b1e812cda3ed"
+license = "Apache-2.0"
+
+[[systems]]
+name = "spring-projects/spring-boot"
+repo = "https://github.com/spring-projects/spring-boot.git"
+version = "v4.1.0"
+version_kind = "release"
+commit = "ac2cfe03538b87a0dc9d2619ed52a4c901eaea54"
+license = "Apache-2.0"
+
+[[systems]]
+name = "elastic/elasticsearch"
+repo = "https://github.com/elastic/elasticsearch.git"
+version = "v9.5.0"
+version_kind = "release"
+commit = "8d4246a64bc255212407b1b313fe402391299c88"
+license = "NOASSERTION"

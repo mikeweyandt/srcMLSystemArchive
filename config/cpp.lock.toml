@@ -21,3 +21,27 @@ version = "b10342"
 version_kind = "release"
 commit = "157b81fe6dbfec7d7ce91ef7cd9c6bc0c218d6fe"
 license = "MIT"
+
+[[systems]]
+name = "electron/electron"
+repo = "https://github.com/electron/electron.git"
+version = "v43.3.0"
+version_kind = "release"
+commit = "1aa21d231aeaf5634880a6e60187256e9f2fd4f9"
+license = "MIT"
+
+[[systems]]
+name = "godotengine/godot"
+repo = "https://github.com/godotengine/godot.git"
+version = "4.7.1-stable"
+version_kind = "release"
+commit = "a13da4feb8d8aefc283c3763d33a2f170a18d541"
+license = "MIT"
+
+[[systems]]
+name = "microsoft/terminal"
+repo = "https://github.com/microsoft/terminal.git"
+version = "v1.24.11911.0"
+version_kind = "release"
+commit = "5a830b2bf7c053d5c7ac22208fe5a346cb5dd3dc"
+license = "MIT"

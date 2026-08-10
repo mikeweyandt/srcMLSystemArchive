@@ -21,3 +21,27 @@ version = "v0.100.2"
 version_kind = "release"
 commit = "1d11b732b7ba7dbb265d1151531655fd8d83c76d"
 license = "MIT"
+
+[[systems]]
+name = "ventoy/Ventoy"
+repo = "https://github.com/ventoy/Ventoy.git"
+version = "v1.1.17"
+version_kind = "release"
+commit = "7cbdc5cf69935bcf1f085ae67f40e70ea7e74bae"
+license = "GPL-3.0"
+
+[[systems]]
+name = "redis/redis"
+repo = "https://github.com/redis/redis.git"
+version = "8.10.0"
+version_kind = "release"
+commit = "5279a8d44818a5ca51e9abb91a9b8ce481d3c88b"
+license = "NOASSERTION"
+
+[[systems]]
+name = "obsproject/obs-studio"
+repo = "https://github.com/obsproject/obs-studio.git"
+version = "32.2.1"
+version_kind = "release"
+commit = "0052d024fd6a5ff1aa04c76cbdffd3085a5dfacc"
+license = "GPL-2.0"
