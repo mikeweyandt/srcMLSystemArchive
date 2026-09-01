@@ -9,9 +9,9 @@ srcml_flags = ["-r", "-j", "4", "--src-encoding=UTF-8"]
 [[systems]]
 name = "2dust/v2rayN"
 repo = "https://github.com/2dust/v2rayN.git"
-version = "7.24.4"
+version = "7.24.9"
 version_kind = "release"
-commit = "635a04d74c3cb6891e144756234d50e147cf175a"
+commit = "521230c40d5c180bc0727cf4003907edfae5a3e0"
 license = "GPL-3.0"
 
 [[systems]]
@@ -25,17 +25,17 @@ license = "GPL-2.0"
 [[systems]]
 name = "PowerShell/PowerShell"
 repo = "https://github.com/PowerShell/PowerShell.git"
-version = "v7.6.4"
+version = "v7.6.5"
 version_kind = "release"
-commit = "abeb8444d065feeccf80bda83eed5675a37719c1"
+commit = "7acb29279dd64e646d821f75d1cc8ad59455a9a6"
 license = "MIT"
 
 [[systems]]
 name = "files-community/Files"
 repo = "https://github.com/files-community/Files.git"
-version = "v4.2.3"
+version = "v4.2.9"
 version_kind = "release"
-commit = "47234d70cbe096ad1bac9fd493c441dee7fd03be"
+commit = "99951c66928c4da714da8b1dd46039421182cbab"
 license = "MIT"
 
 [[systems]]
