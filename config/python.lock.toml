@@ -9,34 +9,34 @@ srcml_flags = ["-r", "-j", "4", "--src-encoding=UTF-8"]
 [[systems]]
 name = "NousResearch/hermes-agent"
 repo = "https://github.com/NousResearch/hermes-agent.git"
-version = "v2026.8.3"
+version = "v2026.8.31"
 version_kind = "release"
-commit = "3c27eb6234bf91b8ceee9e9071591b31e9b148cb"
+commit = "29112bef099274229cadff79cdff7bf7b99c4b77"
 license = "MIT"
 
 [[systems]]
 name = "TheAlgorithms/Python"
 repo = "https://github.com/TheAlgorithms/Python.git"
-version = "master-f5988cc"
+version = "master-9391f54"
 version_kind = "head"
-commit = "f5988cc09713315817df6a7e327e258013a94440"
+commit = "9391f546d6f8c72966ff2d7086c28385909bfa5f"
 license = "MIT"
-
-[[systems]]
-name = "Significant-Gravitas/AutoGPT"
-repo = "https://github.com/Significant-Gravitas/AutoGPT.git"
-version = "autogpt-platform-beta-v0.7.0"
-version_kind = "release"
-commit = "ce6ab7b074a625ce591c1f41ef17276c8093087d"
-license = "NOASSERTION"
 
 [[systems]]
 name = "yt-dlp/yt-dlp"
 repo = "https://github.com/yt-dlp/yt-dlp.git"
-version = "2026.07.04"
+version = "2026.08.19"
 version_kind = "release"
-commit = "fdec00e0bf530dc6c3cc7b1dd780e95d9ae460e9"
+commit = "3a08beaf031ab68f966401ead017ac81fe8486cf"
 license = "Unlicense"
+
+[[systems]]
+name = "Significant-Gravitas/AutoGPT"
+repo = "https://github.com/Significant-Gravitas/AutoGPT.git"
+version = "autogpt-platform-beta-v0.7.3"
+version_kind = "release"
+commit = "f49bcca95ed327396d8ebdd0bdf7810de482ac1a"
+license = "NOASSERTION"
 
 [[systems]]
 name = "AUTOMATIC1111/stable-diffusion-webui"
