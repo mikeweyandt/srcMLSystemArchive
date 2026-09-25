@@ -1,5 +1,60 @@
 {
  "failures": {
+  "archive-c-microsoft-PowerToys-v0.101.2362.0-srcml-1.1.0": {
+   "count": 1,
+   "first_failed_at": "2026-09-25T09:29:36Z",
+   "language": "c",
+   "last_failed_at": "2026-09-25T09:29:36Z",
+   "last_run_id": 36118733884,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/36118733884",
+   "srcml_version": "1.1.0",
+   "system": "microsoft/PowerToys",
+   "version": "v0.101.2362.0"
+  },
+  "archive-c-obsproject-obs-studio-32.2.2-srcml-1.1.0": {
+   "count": 1,
+   "first_failed_at": "2026-09-25T09:29:36Z",
+   "language": "c",
+   "last_failed_at": "2026-09-25T09:29:36Z",
+   "last_run_id": 36118733884,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/36118733884",
+   "srcml_version": "1.1.0",
+   "system": "obsproject/obs-studio",
+   "version": "32.2.2"
+  },
+  "archive-c-torvalds-linux-v7.2-srcml-1.1.0": {
+   "count": 1,
+   "first_failed_at": "2026-09-25T09:29:36Z",
+   "language": "c",
+   "last_failed_at": "2026-09-25T09:29:36Z",
+   "last_run_id": 36118733884,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/36118733884",
+   "srcml_version": "1.1.0",
+   "system": "torvalds/linux",
+   "version": "v7.2"
+  },
+  "archive-cpp-ggml-org-llama.cpp-v0.3.0-srcml-1.1.0": {
+   "count": 1,
+   "first_failed_at": "2026-09-25T09:29:36Z",
+   "language": "cpp",
+   "last_failed_at": "2026-09-25T09:29:36Z",
+   "last_run_id": 36118733884,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/36118733884",
+   "srcml_version": "1.1.0",
+   "system": "ggml-org/llama.cpp",
+   "version": "v0.3.0"
+  },
+  "archive-cpp-godotengine-godot-4.7.2-stable-srcml-1.1.0": {
+   "count": 1,
+   "first_failed_at": "2026-09-25T09:29:36Z",
+   "language": "cpp",
+   "last_failed_at": "2026-09-25T09:29:36Z",
+   "last_run_id": 36118733884,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/36118733884",
+   "srcml_version": "1.1.0",
+   "system": "godotengine/godot",
+   "version": "4.7.2-stable"
+  },
   "archive-java-Stirling-Tools-Stirling-PDF-v2.14.3-srcml-1.1.0": {
    "count": 3,
    "first_failed_at": "2026-08-10T14:45:56Z",
@@ -10,6 +65,17 @@
    "srcml_version": "1.1.0",
    "system": "Stirling-Tools/Stirling-PDF",
    "version": "v2.14.3"
+  },
+  "archive-java-elastic-elasticsearch-v9.5.2-srcml-1.1.0": {
+   "count": 1,
+   "first_failed_at": "2026-09-25T09:29:36Z",
+   "language": "java",
+   "last_failed_at": "2026-09-25T09:29:36Z",
+   "last_run_id": 36118733884,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/36118733884",
+   "srcml_version": "1.1.0",
+   "system": "elastic/elasticsearch",
+   "version": "v9.5.2"
   },
   "archive-java-iluwatar-java-design-patterns-1.25.0-srcml-1.1.0": {
    "count": 3,
@@ -32,6 +98,17 @@
    "srcml_version": "1.1.0",
    "system": "macrozheng/mall",
    "version": "v1.0.3"
+  },
+  "archive-java-spring-projects-spring-boot-v4.1.1-srcml-1.1.0": {
+   "count": 1,
+   "first_failed_at": "2026-09-25T09:29:36Z",
+   "language": "java",
+   "last_failed_at": "2026-09-25T09:29:36Z",
+   "last_run_id": 36118733884,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/36118733884",
+   "srcml_version": "1.1.0",
+   "system": "spring-projects/spring-boot",
+   "version": "v4.1.1"
   }
  },
  "generated_by": "scripts/render_index.py (do not hand-edit). To retry a quarantined system, run the Reconcile archives workflow with retry_failed: true.",

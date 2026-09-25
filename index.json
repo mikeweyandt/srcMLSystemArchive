@@ -12,11 +12,11 @@
    "license": "NOASSERTION",
    "srcml_version": "1.1.0",
    "tag": "archive-c-torvalds-linux-v7.2-srcml-1.1.0",
-   "status": "pending",
+   "status": "failed",
    "published": false,
-   "strikes": 0,
-   "last_run_url": "",
-   "last_attempt_at": ""
+   "strikes": 1,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/36118733884",
+   "last_attempt_at": "2026-09-25T09:29:36Z"
   },
   {
    "language": "c",
@@ -29,11 +29,11 @@
    "license": "MIT",
    "srcml_version": "1.1.0",
    "tag": "archive-c-microsoft-PowerToys-v0.101.2362.0-srcml-1.1.0",
-   "status": "pending",
+   "status": "failed",
    "published": false,
-   "strikes": 0,
-   "last_run_url": "",
-   "last_attempt_at": ""
+   "strikes": 1,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/36118733884",
+   "last_attempt_at": "2026-09-25T09:29:36Z"
   },
   {
    "language": "c",
@@ -67,11 +67,15 @@
    "license": "NOASSERTION",
    "srcml_version": "1.1.0",
    "tag": "archive-c-redis-redis-8.10.1-srcml-1.1.0",
-   "status": "pending",
-   "published": false,
+   "status": "published",
+   "published": true,
    "strikes": 0,
-   "last_run_url": "",
-   "last_attempt_at": ""
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/36118733884",
+   "last_attempt_at": "2026-09-25T09:29:36Z",
+   "url": "https://github.com/mikeweyandt/srcMLSystemArchive/releases/tag/archive-c-redis-redis-8.10.1-srcml-1.1.0",
+   "download_url": "https://github.com/mikeweyandt/srcMLSystemArchive/releases/download/archive-c-redis-redis-8.10.1-srcml-1.1.0/archive-c-redis-redis-8.10.1-srcml-1.1.0.xml.zst",
+   "bytes_compressed": 3020547,
+   "published_at": "2026-09-25T09:33:14Z"
   },
   {
    "language": "c",
@@ -84,11 +88,11 @@
    "license": "GPL-2.0",
    "srcml_version": "1.1.0",
    "tag": "archive-c-obsproject-obs-studio-32.2.2-srcml-1.1.0",
-   "status": "pending",
+   "status": "failed",
    "published": false,
-   "strikes": 0,
-   "last_run_url": "",
-   "last_attempt_at": ""
+   "strikes": 1,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/36118733884",
+   "last_attempt_at": "2026-09-25T09:29:36Z"
   },
   {
    "language": "cpp",
@@ -122,11 +126,11 @@
    "license": "MIT",
    "srcml_version": "1.1.0",
    "tag": "archive-cpp-ggml-org-llama.cpp-v0.3.0-srcml-1.1.0",
-   "status": "pending",
+   "status": "failed",
    "published": false,
-   "strikes": 0,
-   "last_run_url": "",
-   "last_attempt_at": ""
+   "strikes": 1,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/36118733884",
+   "last_attempt_at": "2026-09-25T09:29:36Z"
   },
   {
    "language": "cpp",
@@ -139,11 +143,15 @@
    "license": "MIT",
    "srcml_version": "1.1.0",
    "tag": "archive-cpp-electron-electron-v44.1.0-srcml-1.1.0",
-   "status": "pending",
-   "published": false,
+   "status": "published",
+   "published": true,
    "strikes": 0,
-   "last_run_url": "",
-   "last_attempt_at": ""
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/36118733884",
+   "last_attempt_at": "2026-09-25T09:29:36Z",
+   "url": "https://github.com/mikeweyandt/srcMLSystemArchive/releases/tag/archive-cpp-electron-electron-v44.1.0-srcml-1.1.0",
+   "download_url": "https://github.com/mikeweyandt/srcMLSystemArchive/releases/download/archive-cpp-electron-electron-v44.1.0-srcml-1.1.0/archive-cpp-electron-electron-v44.1.0-srcml-1.1.0.xml.zst",
+   "bytes_compressed": 1026409,
+   "published_at": "2026-09-25T09:32:01Z"
   },
   {
    "language": "cpp",
@@ -156,11 +164,11 @@
    "license": "MIT",
    "srcml_version": "1.1.0",
    "tag": "archive-cpp-godotengine-godot-4.7.2-stable-srcml-1.1.0",
-   "status": "pending",
+   "status": "failed",
    "published": false,
-   "strikes": 0,
-   "last_run_url": "",
-   "last_attempt_at": ""
+   "strikes": 1,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/36118733884",
+   "last_attempt_at": "2026-09-25T09:29:36Z"
   },
   {
    "language": "cpp",
@@ -194,11 +202,15 @@
    "license": "GPL-3.0",
    "srcml_version": "1.1.0",
    "tag": "archive-csharp-2dust-v2rayN-7.24.9-srcml-1.1.0",
-   "status": "pending",
-   "published": false,
+   "status": "published",
+   "published": true,
    "strikes": 0,
-   "last_run_url": "",
-   "last_attempt_at": ""
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/36118733884",
+   "last_attempt_at": "2026-09-25T09:29:36Z",
+   "url": "https://github.com/mikeweyandt/srcMLSystemArchive/releases/tag/archive-csharp-2dust-v2rayN-7.24.9-srcml-1.1.0",
+   "download_url": "https://github.com/mikeweyandt/srcMLSystemArchive/releases/download/archive-csharp-2dust-v2rayN-7.24.9-srcml-1.1.0/archive-csharp-2dust-v2rayN-7.24.9-srcml-1.1.0.xml.zst",
+   "bytes_compressed": 277350,
+   "published_at": "2026-09-25T09:32:48Z"
   },
   {
    "language": "csharp",
@@ -232,11 +244,15 @@
    "license": "MIT",
    "srcml_version": "1.1.0",
    "tag": "archive-csharp-PowerShell-PowerShell-v7.6.5-srcml-1.1.0",
-   "status": "pending",
-   "published": false,
+   "status": "published",
+   "published": true,
    "strikes": 0,
-   "last_run_url": "",
-   "last_attempt_at": ""
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/36118733884",
+   "last_attempt_at": "2026-09-25T09:29:36Z",
+   "url": "https://github.com/mikeweyandt/srcMLSystemArchive/releases/tag/archive-csharp-PowerShell-PowerShell-v7.6.5-srcml-1.1.0",
+   "download_url": "https://github.com/mikeweyandt/srcMLSystemArchive/releases/download/archive-csharp-PowerShell-PowerShell-v7.6.5-srcml-1.1.0/archive-csharp-PowerShell-PowerShell-v7.6.5-srcml-1.1.0.xml.zst",
+   "bytes_compressed": 3791756,
+   "published_at": "2026-09-25T09:31:32Z"
   },
   {
    "language": "csharp",
@@ -249,11 +265,15 @@
    "license": "MIT",
    "srcml_version": "1.1.0",
    "tag": "archive-csharp-files-community-Files-v4.2.9-srcml-1.1.0",
-   "status": "pending",
-   "published": false,
+   "status": "published",
+   "published": true,
    "strikes": 0,
-   "last_run_url": "",
-   "last_attempt_at": ""
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/36118733884",
+   "last_attempt_at": "2026-09-25T09:29:36Z",
+   "url": "https://github.com/mikeweyandt/srcMLSystemArchive/releases/tag/archive-csharp-files-community-Files-v4.2.9-srcml-1.1.0",
+   "download_url": "https://github.com/mikeweyandt/srcMLSystemArchive/releases/download/archive-csharp-files-community-Files-v4.2.9-srcml-1.1.0/archive-csharp-files-community-Files-v4.2.9-srcml-1.1.0.xml.zst",
+   "bytes_compressed": 822574,
+   "published_at": "2026-09-25T09:34:18Z"
   },
   {
    "language": "csharp",
@@ -338,11 +358,11 @@
    "license": "Apache-2.0",
    "srcml_version": "1.1.0",
    "tag": "archive-java-spring-projects-spring-boot-v4.1.1-srcml-1.1.0",
-   "status": "pending",
+   "status": "failed",
    "published": false,
-   "strikes": 0,
-   "last_run_url": "",
-   "last_attempt_at": ""
+   "strikes": 1,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/36118733884",
+   "last_attempt_at": "2026-09-25T09:29:36Z"
   },
   {
    "language": "java",
@@ -355,11 +375,11 @@
    "license": "NOASSERTION",
    "srcml_version": "1.1.0",
    "tag": "archive-java-elastic-elasticsearch-v9.5.2-srcml-1.1.0",
-   "status": "pending",
+   "status": "failed",
    "published": false,
-   "strikes": 0,
-   "last_run_url": "",
-   "last_attempt_at": ""
+   "strikes": 1,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/36118733884",
+   "last_attempt_at": "2026-09-25T09:29:36Z"
   },
   {
    "language": "python",
@@ -372,11 +392,15 @@
    "license": "MIT",
    "srcml_version": "1.1.0",
    "tag": "archive-python-NousResearch-hermes-agent-v2026.8.31-srcml-1.1.0",
-   "status": "pending",
-   "published": false,
+   "status": "published",
+   "published": true,
    "strikes": 0,
-   "last_run_url": "",
-   "last_attempt_at": ""
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/36118733884",
+   "last_attempt_at": "2026-09-25T09:29:36Z",
+   "url": "https://github.com/mikeweyandt/srcMLSystemArchive/releases/tag/archive-python-NousResearch-hermes-agent-v2026.8.31-srcml-1.1.0",
+   "download_url": "https://github.com/mikeweyandt/srcMLSystemArchive/releases/download/archive-python-NousResearch-hermes-agent-v2026.8.31-srcml-1.1.0/archive-python-NousResearch-hermes-agent-v2026.8.31-srcml-1.1.0.xml.zst",
+   "bytes_compressed": 17026427,
+   "published_at": "2026-09-25T09:33:57Z"
   },
   {
    "language": "python",
@@ -389,11 +413,15 @@
    "license": "MIT",
    "srcml_version": "1.1.0",
    "tag": "archive-python-TheAlgorithms-Python-master-9391f54-srcml-1.1.0",
-   "status": "pending",
-   "published": false,
+   "status": "published",
+   "published": true,
    "strikes": 0,
-   "last_run_url": "",
-   "last_attempt_at": ""
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/36118733884",
+   "last_attempt_at": "2026-09-25T09:29:36Z",
+   "url": "https://github.com/mikeweyandt/srcMLSystemArchive/releases/tag/archive-python-TheAlgorithms-Python-master-9391f54-srcml-1.1.0",
+   "download_url": "https://github.com/mikeweyandt/srcMLSystemArchive/releases/download/archive-python-TheAlgorithms-Python-master-9391f54-srcml-1.1.0/archive-python-TheAlgorithms-Python-master-9391f54-srcml-1.1.0.xml.zst",
+   "bytes_compressed": 880971,
+   "published_at": "2026-09-25T09:31:55Z"
   },
   {
    "language": "python",
@@ -406,11 +434,15 @@
    "license": "Unlicense",
    "srcml_version": "1.1.0",
    "tag": "archive-python-yt-dlp-yt-dlp-2026.08.19-srcml-1.1.0",
-   "status": "pending",
-   "published": false,
+   "status": "published",
+   "published": true,
    "strikes": 0,
-   "last_run_url": "",
-   "last_attempt_at": ""
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/36118733884",
+   "last_attempt_at": "2026-09-25T09:29:36Z",
+   "url": "https://github.com/mikeweyandt/srcMLSystemArchive/releases/tag/archive-python-yt-dlp-yt-dlp-2026.08.19-srcml-1.1.0",
+   "download_url": "https://github.com/mikeweyandt/srcMLSystemArchive/releases/download/archive-python-yt-dlp-yt-dlp-2026.08.19-srcml-1.1.0/archive-python-yt-dlp-yt-dlp-2026.08.19-srcml-1.1.0.xml.zst",
+   "bytes_compressed": 2192196,
+   "published_at": "2026-09-25T09:32:30Z"
   },
   {
    "language": "python",
@@ -423,11 +455,15 @@
    "license": "NOASSERTION",
    "srcml_version": "1.1.0",
    "tag": "archive-python-Significant-Gravitas-AutoGPT-autogpt-platform-beta-v0.7.3-srcml-1.1.0",
-   "status": "pending",
-   "published": false,
+   "status": "published",
+   "published": true,
    "strikes": 0,
-   "last_run_url": "",
-   "last_attempt_at": ""
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/36118733884",
+   "last_attempt_at": "2026-09-25T09:29:36Z",
+   "url": "https://github.com/mikeweyandt/srcMLSystemArchive/releases/tag/archive-python-Significant-Gravitas-AutoGPT-autogpt-platform-beta-v0.7.3-srcml-1.1.0",
+   "download_url": "https://github.com/mikeweyandt/srcMLSystemArchive/releases/download/archive-python-Significant-Gravitas-AutoGPT-autogpt-platform-beta-v0.7.3-srcml-1.1.0/archive-python-Significant-Gravitas-AutoGPT-autogpt-platform-beta-v0.7.3-srcml-1.1.0.xml.zst",
+   "bytes_compressed": 4206393,
+   "published_at": "2026-09-25T09:34:35Z"
   },
   {
    "language": "python",
