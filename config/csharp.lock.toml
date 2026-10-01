@@ -9,25 +9,25 @@ srcml_flags = ["-r", "-j", "4", "--src-encoding=UTF-8"]
 [[systems]]
 name = "2dust/v2rayN"
 repo = "https://github.com/2dust/v2rayN.git"
-version = "7.24.9"
+version = "7.25.4"
 version_kind = "release"
-commit = "521230c40d5c180bc0727cf4003907edfae5a3e0"
+commit = "7d6a967c18c697f28dc6917122ed3a4993fcf336"
 license = "GPL-3.0"
 
 [[systems]]
 name = "jellyfin/jellyfin"
 repo = "https://github.com/jellyfin/jellyfin.git"
-version = "v10.11.11"
+version = "v12.1"
 version_kind = "release"
-commit = "1fbd8739292cce610231be93daf43368733edf63"
+commit = "ee91c75e777da41a9c4f4855e70adc604fbf2ef8"
 license = "GPL-2.0"
 
 [[systems]]
 name = "PowerShell/PowerShell"
 repo = "https://github.com/PowerShell/PowerShell.git"
-version = "v7.6.5"
+version = "v7.6.6"
 version_kind = "release"
-commit = "7acb29279dd64e646d821f75d1cc8ad59455a9a6"
+commit = "f260eb9c31ec72c5282f98e5ea24d9be4f8d7536"
 license = "MIT"
 
 [[systems]]

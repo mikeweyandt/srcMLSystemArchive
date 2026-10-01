@@ -17,9 +17,9 @@ license = "NOASSERTION"
 [[systems]]
 name = "Stirling-Tools/Stirling-PDF"
 repo = "https://github.com/Stirling-Tools/Stirling-PDF.git"
-version = "v2.14.3"
+version = "v3.0.1"
 version_kind = "release"
-commit = "e556eba8326c8349aa0318034cfdb5c442dca21c"
+commit = "d68870dc2cd7d7c681cad9bab08c3b2c3e4f0432"
 license = "NOASSERTION"
 
 [[systems]]
@@ -39,9 +39,9 @@ commit = "6fdf67ea1552691e932604d4bf67a5e08ff0b0ea"
 license = "Apache-2.0"
 
 [[systems]]
-name = "elastic/elasticsearch"
-repo = "https://github.com/elastic/elasticsearch.git"
-version = "v9.5.2"
+name = "NationalSecurityAgency/ghidra"
+repo = "https://github.com/NationalSecurityAgency/ghidra.git"
+version = "Ghidra_12.1.4_build"
 version_kind = "release"
-commit = "b42549c72e6e040825b13e5d8ebf7ff63886b24d"
-license = "NOASSERTION"
+commit = "8b6bbb857accdfa20dc5b2f5dea471178c2e9fbc"
+license = "Apache-2.0"

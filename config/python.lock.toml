@@ -9,17 +9,17 @@ srcml_flags = ["-r", "-j", "4", "--src-encoding=UTF-8"]
 [[systems]]
 name = "NousResearch/hermes-agent"
 repo = "https://github.com/NousResearch/hermes-agent.git"
-version = "v2026.8.31"
+version = "v2026.9.24"
 version_kind = "release"
-commit = "29112bef099274229cadff79cdff7bf7b99c4b77"
+commit = "f97608f178d1ffeca59860195ab7da295f7c8e5f"
 license = "MIT"
 
 [[systems]]
 name = "TheAlgorithms/Python"
 repo = "https://github.com/TheAlgorithms/Python.git"
-version = "master-9391f54"
+version = "master-157c73d"
 version_kind = "head"
-commit = "9391f546d6f8c72966ff2d7086c28385909bfa5f"
+commit = "157c73dd03199b75b2cc2155bd2e59debcef49bc"
 license = "MIT"
 
 [[systems]]
@@ -33,15 +33,15 @@ license = "Unlicense"
 [[systems]]
 name = "Significant-Gravitas/AutoGPT"
 repo = "https://github.com/Significant-Gravitas/AutoGPT.git"
-version = "autogpt-platform-beta-v0.7.3"
+version = "autogpt-platform-beta-v0.8.2"
 version_kind = "release"
-commit = "f49bcca95ed327396d8ebdd0bdf7810de482ac1a"
+commit = "bf6e0c33d0f615983082ed7a5343dbbfc25adaab"
 license = "NOASSERTION"
 
 [[systems]]
-name = "AUTOMATIC1111/stable-diffusion-webui"
-repo = "https://github.com/AUTOMATIC1111/stable-diffusion-webui.git"
-version = "v1.10.1"
+name = "huggingface/transformers"
+repo = "https://github.com/huggingface/transformers.git"
+version = "v5.18.0"
 version_kind = "release"
-commit = "82a973c04367123ae98bd9abdf80d9eda9b910e2"
-license = "AGPL-3.0"
+commit = "a906d3c4b65095f2308b6a6a193e934d03b8eb5d"
+license = "Apache-2.0"
