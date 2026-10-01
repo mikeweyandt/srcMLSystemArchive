@@ -17,17 +17,17 @@ license = "Apache-2.0"
 [[systems]]
 name = "ggml-org/llama.cpp"
 repo = "https://github.com/ggml-org/llama.cpp.git"
-version = "v0.3.0"
+version = "v0.5.0"
 version_kind = "release"
-commit = "c1d0e7a004015f23bc0233470b747b596f29b264"
+commit = "7fe450e19305b828c199d602c23a8337aaa1f03b"
 license = "MIT"
 
 [[systems]]
 name = "electron/electron"
 repo = "https://github.com/electron/electron.git"
-version = "v44.1.0"
+version = "v44.5.1"
 version_kind = "release"
-commit = "1a649bee9e57dda3f494c8a48edbd0c72150a019"
+commit = "19c601167d4ae75989938416c18ed81eb21c6020"
 license = "MIT"
 
 [[systems]]

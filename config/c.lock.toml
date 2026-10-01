@@ -31,17 +31,17 @@ commit = "7cbdc5cf69935bcf1f085ae67f40e70ea7e74bae"
 license = "GPL-3.0"
 
 [[systems]]
-name = "redis/redis"
-repo = "https://github.com/redis/redis.git"
-version = "8.10.1"
-version_kind = "release"
-commit = "3399357e7c17b668289386b8a15a3037bc4527b1"
-license = "NOASSERTION"
-
-[[systems]]
 name = "obsproject/obs-studio"
 repo = "https://github.com/obsproject/obs-studio.git"
 version = "32.2.2"
 version_kind = "release"
 commit = "ba2f32bdf791005443988a4955e963663e16b1ed"
 license = "GPL-2.0"
+
+[[systems]]
+name = "redis/redis"
+repo = "https://github.com/redis/redis.git"
+version = "8.10.2"
+version_kind = "release"
+commit = "498ecd0d6d007db11ddb3aea9428552598a78622"
+license = "NOASSERTION"
