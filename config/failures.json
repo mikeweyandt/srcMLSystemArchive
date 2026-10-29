@@ -1,5 +1,72 @@
 {
- "failures": {},
+ "failures": {
+  "archive-cpp-microsoft-terminal-v1.24.11911.0-srcml-1.2.0": {
+   "count": 1,
+   "first_failed_at": "2026-10-29T10:46:08Z",
+   "language": "cpp",
+   "last_failed_at": "2026-10-29T10:46:08Z",
+   "last_run_id": 40860151463,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40860151463",
+   "srcml_version": "1.2.0",
+   "system": "microsoft/terminal",
+   "version": "v1.24.11911.0"
+  },
+  "archive-java-NationalSecurityAgency-ghidra-Ghidra_12.1.4_build-srcml-1.2.0": {
+   "count": 1,
+   "first_failed_at": "2026-10-29T10:46:08Z",
+   "language": "java",
+   "last_failed_at": "2026-10-29T10:46:08Z",
+   "last_run_id": 40860151463,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40860151463",
+   "srcml_version": "1.2.0",
+   "system": "NationalSecurityAgency/ghidra",
+   "version": "Ghidra_12.1.4_build"
+  },
+  "archive-java-Stirling-Tools-Stirling-PDF-v3.0.1-srcml-1.2.0": {
+   "count": 1,
+   "first_failed_at": "2026-10-29T10:46:08Z",
+   "language": "java",
+   "last_failed_at": "2026-10-29T10:46:08Z",
+   "last_run_id": 40860151463,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40860151463",
+   "srcml_version": "1.2.0",
+   "system": "Stirling-Tools/Stirling-PDF",
+   "version": "v3.0.1"
+  },
+  "archive-java-iluwatar-java-design-patterns-1.25.0-srcml-1.2.0": {
+   "count": 1,
+   "first_failed_at": "2026-10-29T10:46:08Z",
+   "language": "java",
+   "last_failed_at": "2026-10-29T10:46:08Z",
+   "last_run_id": 40860151463,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40860151463",
+   "srcml_version": "1.2.0",
+   "system": "iluwatar/java-design-patterns",
+   "version": "1.25.0"
+  },
+  "archive-java-macrozheng-mall-v1.0.3-srcml-1.2.0": {
+   "count": 1,
+   "first_failed_at": "2026-10-29T10:46:08Z",
+   "language": "java",
+   "last_failed_at": "2026-10-29T10:46:08Z",
+   "last_run_id": 40860151463,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40860151463",
+   "srcml_version": "1.2.0",
+   "system": "macrozheng/mall",
+   "version": "v1.0.3"
+  },
+  "archive-python-NousResearch-hermes-agent-v2026.9.24-srcml-1.2.0": {
+   "count": 1,
+   "first_failed_at": "2026-10-29T10:46:08Z",
+   "language": "python",
+   "last_failed_at": "2026-10-29T10:46:08Z",
+   "last_run_id": 40860151463,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40860151463",
+   "srcml_version": "1.2.0",
+   "system": "NousResearch/hermes-agent",
+   "version": "v2026.9.24"
+  }
+ },
  "generated_by": "scripts/render_index.py (do not hand-edit). To retry a quarantined system, run the Reconcile archives workflow with retry_failed: true.",
  "schema": 1
 }

@@ -6,12 +6,12 @@
 
 ⚠️ **6 system(s) currently failing to build.** Archives are published only when they are well-formed XML, so a failure here means `srcml` either could not produce a valid archive for that source or hung trying. After 3 consecutive failures a system stops being retried; run the **Reconcile archives** workflow with `retry_failed: true` to attempt one again.
 
-- `cpp` **microsoft/terminal** `v1.24.11911.0` (srcml 1.2.0) — [build log](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40822101695)
-- `java` **iluwatar/java-design-patterns** `1.25.0` (srcml 1.2.0) — [build log](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40822101695)
-- `java` **Stirling-Tools/Stirling-PDF** `v3.0.1` (srcml 1.2.0) — [build log](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40822101695)
-- `java` **macrozheng/mall** `v1.0.3` (srcml 1.2.0) — [build log](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40822101695)
-- `java` **NationalSecurityAgency/ghidra** `Ghidra_12.1.4_build` (srcml 1.2.0) — [build log](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40822101695)
-- `python` **NousResearch/hermes-agent** `v2026.9.24` (srcml 1.2.0) — [build log](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40822101695)
+- `cpp` **microsoft/terminal** `v1.24.11911.0` (srcml 1.2.0) — [build log](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40860151463)
+- `java` **iluwatar/java-design-patterns** `1.25.0` (srcml 1.2.0) — [build log](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40860151463)
+- `java` **Stirling-Tools/Stirling-PDF** `v3.0.1` (srcml 1.2.0) — [build log](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40860151463)
+- `java` **macrozheng/mall** `v1.0.3` (srcml 1.2.0) — [build log](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40860151463)
+- `java` **NationalSecurityAgency/ghidra** `Ghidra_12.1.4_build` (srcml 1.2.0) — [build log](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40860151463)
+- `python` **NousResearch/hermes-agent** `v2026.9.24` (srcml 1.2.0) — [build log](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40860151463)
 
 ## C
 
@@ -35,7 +35,7 @@
 | C++ | [`ggml-org/llama.cpp`](https://github.com/ggml-org/llama.cpp) | `v0.5.0` | `1.2.0` | 6.1 MB | [download](https://github.com/mikeweyandt/srcMLSystemArchive/releases/download/archive-cpp-ggml-org-llama.cpp-v0.5.0-srcml-1.2.0/archive-cpp-ggml-org-llama.cpp-v0.5.0-srcml-1.2.0.xml.zst) |
 | C++ | [`electron/electron`](https://github.com/electron/electron) | `v44.5.1` | `1.2.0` | 1.8 MB | [download](https://github.com/mikeweyandt/srcMLSystemArchive/releases/download/archive-cpp-electron-electron-v44.5.1-srcml-1.2.0/archive-cpp-electron-electron-v44.5.1-srcml-1.2.0.xml.zst) |
 | C++ | [`godotengine/godot`](https://github.com/godotengine/godot) | `4.7.2-stable` | `1.2.0` | 26.1 MB | [download](https://github.com/mikeweyandt/srcMLSystemArchive/releases/download/archive-cpp-godotengine-godot-4.7.2-stable-srcml-1.2.0/archive-cpp-godotengine-godot-4.7.2-stable-srcml-1.2.0.xml.zst) |
-| C++ | [`microsoft/terminal`](https://github.com/microsoft/terminal) | `v1.24.11911.0` | `1.2.0` | — | [❌ failed](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40822101695) |
+| C++ | [`microsoft/terminal`](https://github.com/microsoft/terminal) | `v1.24.11911.0` | `1.2.0` | — | [❌ failed](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40860151463) |
 
 ## C#
 
@@ -55,11 +55,11 @@
 
 | language | system | version | srcml version | size | archive |
 |---|---|---|---|---|---|
-| Java | [`iluwatar/java-design-patterns`](https://github.com/iluwatar/java-design-patterns) | `1.25.0` <sup>tag</sup> | `1.2.0` | — | [❌ failed](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40822101695) |
-| Java | [`Stirling-Tools/Stirling-PDF`](https://github.com/Stirling-Tools/Stirling-PDF) | `v3.0.1` | `1.2.0` | — | [❌ failed](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40822101695) |
-| Java | [`macrozheng/mall`](https://github.com/macrozheng/mall) | `v1.0.3` | `1.2.0` | — | [❌ failed](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40822101695) |
+| Java | [`iluwatar/java-design-patterns`](https://github.com/iluwatar/java-design-patterns) | `1.25.0` <sup>tag</sup> | `1.2.0` | — | [❌ failed](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40860151463) |
+| Java | [`Stirling-Tools/Stirling-PDF`](https://github.com/Stirling-Tools/Stirling-PDF) | `v3.0.1` | `1.2.0` | — | [❌ failed](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40860151463) |
+| Java | [`macrozheng/mall`](https://github.com/macrozheng/mall) | `v1.0.3` | `1.2.0` | — | [❌ failed](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40860151463) |
 | Java | [`spring-projects/spring-boot`](https://github.com/spring-projects/spring-boot) | `v4.1.1` | `1.2.0` | 3.5 MB | [download](https://github.com/mikeweyandt/srcMLSystemArchive/releases/download/archive-java-spring-projects-spring-boot-v4.1.1-srcml-1.2.0/archive-java-spring-projects-spring-boot-v4.1.1-srcml-1.2.0.xml.zst) |
-| Java | [`NationalSecurityAgency/ghidra`](https://github.com/NationalSecurityAgency/ghidra) | `Ghidra_12.1.4_build` | `1.2.0` | — | [❌ failed](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40822101695) |
+| Java | [`NationalSecurityAgency/ghidra`](https://github.com/NationalSecurityAgency/ghidra) | `Ghidra_12.1.4_build` | `1.2.0` | — | [❌ failed](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40860151463) |
 
 ## Python
 
@@ -67,7 +67,7 @@
 
 | language | system | version | srcml version | size | archive |
 |---|---|---|---|---|---|
-| Python | [`NousResearch/hermes-agent`](https://github.com/NousResearch/hermes-agent) | `v2026.9.24` | `1.2.0` | — | [❌ failed](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40822101695) |
+| Python | [`NousResearch/hermes-agent`](https://github.com/NousResearch/hermes-agent) | `v2026.9.24` | `1.2.0` | — | [❌ failed](https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40860151463) |
 | Python | [`TheAlgorithms/Python`](https://github.com/TheAlgorithms/Python) | `master-157c73d` <sup>head</sup> | `1.2.0` | 1.0 MB | [download](https://github.com/mikeweyandt/srcMLSystemArchive/releases/download/archive-python-TheAlgorithms-Python-master-157c73d-srcml-1.2.0/archive-python-TheAlgorithms-Python-master-157c73d-srcml-1.2.0.xml.zst) |
 | Python | [`yt-dlp/yt-dlp`](https://github.com/yt-dlp/yt-dlp) | `2026.08.19` | `1.2.0` | 2.1 MB | [download](https://github.com/mikeweyandt/srcMLSystemArchive/releases/download/archive-python-yt-dlp-yt-dlp-2026.08.19-srcml-1.2.0/archive-python-yt-dlp-yt-dlp-2026.08.19-srcml-1.2.0.xml.zst) |
 | Python | [`Significant-Gravitas/AutoGPT`](https://github.com/Significant-Gravitas/AutoGPT) | `autogpt-platform-beta-v0.8.2` | `1.2.0` | 8.1 MB | [download](https://github.com/mikeweyandt/srcMLSystemArchive/releases/download/archive-python-Significant-Gravitas-AutoGPT-autogpt-platform-beta-v0.8.2-srcml-1.2.0/archive-python-Significant-Gravitas-AutoGPT-autogpt-platform-beta-v0.8.2-srcml-1.2.0.xml.zst) |
