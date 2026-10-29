@@ -44,8 +44,8 @@ require_license = true
 
 [srcml]
 # Every lockfile system is archived once per version listed here.
-# Upstream currently publishes only 1.0.0 and 1.1.0.
-versions = ["1.1.0"]
+# Upstream currently publishes 1.0.0, 1.1.0, and 1.2.0.
+versions = ["1.2.0"]
 
 # Ubuntu release whose .deb is pulled from the srcML release page, and the
 # runner image that must match it.
