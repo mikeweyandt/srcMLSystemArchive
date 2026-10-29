@@ -33,17 +33,6 @@
    "system": "torvalds/linux",
    "version": "v7.2"
   },
-  "archive-cpp-ggml-org-llama.cpp-v0.3.0-srcml-1.1.0": {
-   "count": 3,
-   "first_failed_at": "2026-09-25T09:29:36Z",
-   "language": "cpp",
-   "last_failed_at": "2026-09-27T09:54:29Z",
-   "last_run_id": 36310849656,
-   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/36310849656",
-   "srcml_version": "1.1.0",
-   "system": "ggml-org/llama.cpp",
-   "version": "v0.3.0"
-  },
   "archive-cpp-godotengine-godot-4.7.2-stable-srcml-1.1.0": {
    "count": 3,
    "first_failed_at": "2026-09-25T09:29:36Z",
@@ -54,28 +43,6 @@
    "srcml_version": "1.1.0",
    "system": "godotengine/godot",
    "version": "4.7.2-stable"
-  },
-  "archive-java-Stirling-Tools-Stirling-PDF-v2.14.3-srcml-1.1.0": {
-   "count": 3,
-   "first_failed_at": "2026-08-10T14:45:56Z",
-   "language": "java",
-   "last_failed_at": "2026-08-10T15:17:35Z",
-   "last_run_id": 31402789357,
-   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/31402789357",
-   "srcml_version": "1.1.0",
-   "system": "Stirling-Tools/Stirling-PDF",
-   "version": "v2.14.3"
-  },
-  "archive-java-elastic-elasticsearch-v9.5.2-srcml-1.1.0": {
-   "count": 3,
-   "first_failed_at": "2026-09-25T09:29:36Z",
-   "language": "java",
-   "last_failed_at": "2026-09-27T09:54:29Z",
-   "last_run_id": 36310849656,
-   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/36310849656",
-   "srcml_version": "1.1.0",
-   "system": "elastic/elasticsearch",
-   "version": "v9.5.2"
   },
   "archive-java-iluwatar-java-design-patterns-1.25.0-srcml-1.1.0": {
    "count": 3,
