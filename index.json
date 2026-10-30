@@ -203,9 +203,9 @@
    "tag": "archive-cpp-microsoft-terminal-v1.24.11911.0-srcml-1.2.0",
    "status": "failed",
    "published": false,
-   "strikes": 1,
-   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40860151463",
-   "last_attempt_at": "2026-10-29T10:46:08Z"
+   "strikes": 2,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/41043087937",
+   "last_attempt_at": "2026-10-30T10:45:33Z"
   },
   {
    "language": "csharp",
@@ -325,9 +325,9 @@
    "tag": "archive-java-iluwatar-java-design-patterns-1.25.0-srcml-1.2.0",
    "status": "failed",
    "published": false,
-   "strikes": 1,
-   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40860151463",
-   "last_attempt_at": "2026-10-29T10:46:08Z"
+   "strikes": 2,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/41043087937",
+   "last_attempt_at": "2026-10-30T10:45:33Z"
   },
   {
    "language": "java",
@@ -342,9 +342,9 @@
    "tag": "archive-java-Stirling-Tools-Stirling-PDF-v3.0.1-srcml-1.2.0",
    "status": "failed",
    "published": false,
-   "strikes": 1,
-   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40860151463",
-   "last_attempt_at": "2026-10-29T10:46:08Z"
+   "strikes": 2,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/41043087937",
+   "last_attempt_at": "2026-10-30T10:45:33Z"
   },
   {
    "language": "java",
@@ -359,9 +359,9 @@
    "tag": "archive-java-macrozheng-mall-v1.0.3-srcml-1.2.0",
    "status": "failed",
    "published": false,
-   "strikes": 1,
-   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40860151463",
-   "last_attempt_at": "2026-10-29T10:46:08Z"
+   "strikes": 2,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/41043087937",
+   "last_attempt_at": "2026-10-30T10:45:33Z"
   },
   {
    "language": "java",
@@ -397,9 +397,9 @@
    "tag": "archive-java-NationalSecurityAgency-ghidra-Ghidra_12.1.4_build-srcml-1.2.0",
    "status": "failed",
    "published": false,
-   "strikes": 1,
-   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40860151463",
-   "last_attempt_at": "2026-10-29T10:46:08Z"
+   "strikes": 2,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/41043087937",
+   "last_attempt_at": "2026-10-30T10:45:33Z"
   },
   {
    "language": "python",
@@ -414,9 +414,9 @@
    "tag": "archive-python-NousResearch-hermes-agent-v2026.9.24-srcml-1.2.0",
    "status": "failed",
    "published": false,
-   "strikes": 1,
-   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/40860151463",
-   "last_attempt_at": "2026-10-29T10:46:08Z"
+   "strikes": 2,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/41043087937",
+   "last_attempt_at": "2026-10-30T10:45:33Z"
   },
   {
    "language": "python",
