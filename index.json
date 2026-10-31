@@ -201,11 +201,11 @@
    "license": "MIT",
    "srcml_version": "1.2.0",
    "tag": "archive-cpp-microsoft-terminal-v1.24.11911.0-srcml-1.2.0",
-   "status": "failed",
+   "status": "quarantined",
    "published": false,
-   "strikes": 2,
-   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/41043087937",
-   "last_attempt_at": "2026-10-30T10:45:33Z"
+   "strikes": 3,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/41192005632",
+   "last_attempt_at": "2026-10-31T10:15:27Z"
   },
   {
    "language": "csharp",
@@ -323,11 +323,11 @@
    "license": "NOASSERTION",
    "srcml_version": "1.2.0",
    "tag": "archive-java-iluwatar-java-design-patterns-1.25.0-srcml-1.2.0",
-   "status": "failed",
+   "status": "quarantined",
    "published": false,
-   "strikes": 2,
-   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/41043087937",
-   "last_attempt_at": "2026-10-30T10:45:33Z"
+   "strikes": 3,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/41192005632",
+   "last_attempt_at": "2026-10-31T10:15:27Z"
   },
   {
    "language": "java",
@@ -340,11 +340,11 @@
    "license": "NOASSERTION",
    "srcml_version": "1.2.0",
    "tag": "archive-java-Stirling-Tools-Stirling-PDF-v3.0.1-srcml-1.2.0",
-   "status": "failed",
+   "status": "quarantined",
    "published": false,
-   "strikes": 2,
-   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/41043087937",
-   "last_attempt_at": "2026-10-30T10:45:33Z"
+   "strikes": 3,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/41192005632",
+   "last_attempt_at": "2026-10-31T10:15:27Z"
   },
   {
    "language": "java",
@@ -357,11 +357,11 @@
    "license": "Apache-2.0",
    "srcml_version": "1.2.0",
    "tag": "archive-java-macrozheng-mall-v1.0.3-srcml-1.2.0",
-   "status": "failed",
+   "status": "quarantined",
    "published": false,
-   "strikes": 2,
-   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/41043087937",
-   "last_attempt_at": "2026-10-30T10:45:33Z"
+   "strikes": 3,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/41192005632",
+   "last_attempt_at": "2026-10-31T10:15:27Z"
   },
   {
    "language": "java",
@@ -395,11 +395,11 @@
    "license": "Apache-2.0",
    "srcml_version": "1.2.0",
    "tag": "archive-java-NationalSecurityAgency-ghidra-Ghidra_12.1.4_build-srcml-1.2.0",
-   "status": "failed",
+   "status": "quarantined",
    "published": false,
-   "strikes": 2,
-   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/41043087937",
-   "last_attempt_at": "2026-10-30T10:45:33Z"
+   "strikes": 3,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/41192005632",
+   "last_attempt_at": "2026-10-31T10:15:27Z"
   },
   {
    "language": "python",
@@ -412,11 +412,11 @@
    "license": "MIT",
    "srcml_version": "1.2.0",
    "tag": "archive-python-NousResearch-hermes-agent-v2026.9.24-srcml-1.2.0",
-   "status": "failed",
+   "status": "quarantined",
    "published": false,
-   "strikes": 2,
-   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/41043087937",
-   "last_attempt_at": "2026-10-30T10:45:33Z"
+   "strikes": 3,
+   "last_run_url": "https://github.com/mikeweyandt/srcMLSystemArchive/actions/runs/41192005632",
+   "last_attempt_at": "2026-10-31T10:15:27Z"
   },
   {
    "language": "python",
