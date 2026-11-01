@@ -9,39 +9,39 @@ srcml_flags = ["-r", "-j", "4", "--src-encoding=UTF-8"]
 [[systems]]
 name = "torvalds/linux"
 repo = "https://github.com/torvalds/linux.git"
-version = "v7.2"
+version = "v7.3"
 version_kind = "tag"
-commit = "8d3ae59288f1e7d58d76558a6ee96d533bc5019f"
+commit = "c03c1a14507dfaf8b856c2608f9ac216021fc222"
 license = "NOASSERTION"
+
+[[systems]]
+name = "Genymobile/scrcpy"
+repo = "https://github.com/Genymobile/scrcpy.git"
+version = "v5.0.1"
+version_kind = "release"
+commit = "a60891aea193d92e7e5c3942700eca63f9d19a5f"
+license = "Apache-2.0"
 
 [[systems]]
 name = "microsoft/PowerToys"
 repo = "https://github.com/microsoft/PowerToys.git"
-version = "v0.101.2362.0"
+version = "v0.102.3001"
 version_kind = "release"
-commit = "389b1a3827b2cf577723288df15437490ef0663a"
+commit = "a00b2bce7403f0a48efe5cbb6671074e01f27824"
 license = "MIT"
 
 [[systems]]
 name = "ventoy/Ventoy"
 repo = "https://github.com/ventoy/Ventoy.git"
-version = "v1.1.17"
+version = "v1.1.18"
 version_kind = "release"
-commit = "7cbdc5cf69935bcf1f085ae67f40e70ea7e74bae"
+commit = "6116894ab8abdf3ef8d43411a6732d34ee19214e"
 license = "GPL-3.0"
 
 [[systems]]
 name = "obsproject/obs-studio"
 repo = "https://github.com/obsproject/obs-studio.git"
-version = "32.2.2"
+version = "33.0.1"
 version_kind = "release"
-commit = "ba2f32bdf791005443988a4955e963663e16b1ed"
+commit = "65c320b46e1af5c7a555161aea6182cdf7a8c524"
 license = "GPL-2.0"
-
-[[systems]]
-name = "redis/redis"
-repo = "https://github.com/redis/redis.git"
-version = "8.10.2"
-version_kind = "release"
-commit = "498ecd0d6d007db11ddb3aea9428552598a78622"
-license = "NOASSERTION"

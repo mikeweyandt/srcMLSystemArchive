@@ -9,39 +9,39 @@ srcml_flags = ["-r", "-j", "4", "--src-encoding=UTF-8"]
 [[systems]]
 name = "NousResearch/hermes-agent"
 repo = "https://github.com/NousResearch/hermes-agent.git"
-version = "v2026.9.24"
+version = "v0.22.5"
 version_kind = "release"
-commit = "f97608f178d1ffeca59860195ab7da295f7c8e5f"
+commit = "bf0203a794a07aac3ff764972ab9087baa4e4f4e"
 license = "MIT"
 
 [[systems]]
 name = "TheAlgorithms/Python"
 repo = "https://github.com/TheAlgorithms/Python.git"
-version = "master-157c73d"
+version = "master-6e03a48"
 version_kind = "head"
-commit = "157c73dd03199b75b2cc2155bd2e59debcef49bc"
+commit = "6e03a48579ca212a08b36be00378f887dc41a003"
 license = "MIT"
 
 [[systems]]
 name = "yt-dlp/yt-dlp"
 repo = "https://github.com/yt-dlp/yt-dlp.git"
-version = "2026.08.19"
+version = "2026.10.26"
 version_kind = "release"
-commit = "3a08beaf031ab68f966401ead017ac81fe8486cf"
+commit = "f264a6cbd1f630894da0f368df00f8aae50140e0"
 license = "Unlicense"
 
 [[systems]]
 name = "Significant-Gravitas/AutoGPT"
 repo = "https://github.com/Significant-Gravitas/AutoGPT.git"
-version = "autogpt-platform-beta-v0.8.2"
+version = "autogpt-platform-beta-v0.10.0"
 version_kind = "release"
-commit = "bf6e0c33d0f615983082ed7a5343dbbfc25adaab"
+commit = "e2316d032883070a2e9aded36d2eb38b8e3a03df"
 license = "NOASSERTION"
 
 [[systems]]
 name = "huggingface/transformers"
 repo = "https://github.com/huggingface/transformers.git"
-version = "v5.18.0"
+version = "v5.22.1"
 version_kind = "release"
-commit = "a906d3c4b65095f2308b6a6a193e934d03b8eb5d"
+commit = "446a570e62b04a89ea001604ada7366baac2ea67"
 license = "Apache-2.0"

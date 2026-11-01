@@ -17,17 +17,17 @@ license = "Apache-2.0"
 [[systems]]
 name = "ggml-org/llama.cpp"
 repo = "https://github.com/ggml-org/llama.cpp.git"
-version = "v0.5.0"
+version = "v0.8.0"
 version_kind = "release"
-commit = "7fe450e19305b828c199d602c23a8337aaa1f03b"
+commit = "8642541b255bfb5dc39cd351a178be09013a55d6"
 license = "MIT"
 
 [[systems]]
 name = "electron/electron"
 repo = "https://github.com/electron/electron.git"
-version = "v44.5.1"
+version = "v45.2.1"
 version_kind = "release"
-commit = "19c601167d4ae75989938416c18ed81eb21c6020"
+commit = "f81ca3d4f09f57667238120adacb01239d5ecd89"
 license = "MIT"
 
 [[systems]]
@@ -41,7 +41,7 @@ license = "MIT"
 [[systems]]
 name = "microsoft/terminal"
 repo = "https://github.com/microsoft/terminal.git"
-version = "v1.24.11911.0"
+version = "v1.25.2733.0"
 version_kind = "release"
-commit = "5a830b2bf7c053d5c7ac22208fe5a346cb5dd3dc"
+commit = "dc8ae365847d41f62d1ebca93815bb00959bc12f"
 license = "MIT"
